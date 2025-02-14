@@ -2,6 +2,8 @@
 
 Motion2MIDI is a software tool to stream coordinate data from OpenVR controllers to MIDI CC allowing for control of synths with motion. The system is designed for use with a room-scale VR system, but does not require wearing of a headset to be used in live performance settings.
 
+https://github.com/user-attachments/assets/db3eeb01-23dd-4bc3-98fa-e530140c2ca7
+
 The program has been tested mainly with Valve Index controllers connected to SteamVR, but also has been tested with Vive Trackers. Some features include 
 
 * Position (x,y,z), orientation (roll, pitch, yaw), velocity, and trigger press sent out as CC values
