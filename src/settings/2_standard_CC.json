@@ -1,0 +1,82 @@
+{
+    "dataframe": [
+        {
+            "dim": "x",
+            "CC": 2,
+            "send": false,
+            "solo": false,
+            "min_range": -0.2958977222442627,
+            "max_range": -0.09085726737976074,
+            "invert": false
+        },
+        {
+            "dim": "y",
+            "CC": 1,
+            "send": true,
+            "solo": false,
+            "min_range": 1.2693101167678833,
+            "max_range": 1.371934175491333,
+            "invert": false
+        },
+        {
+            "dim": "z",
+            "CC": 4,
+            "send": false,
+            "solo": false,
+            "min_range": 1.1954325437545776,
+            "max_range": 1.2632265090942383,
+            "invert": false
+        },
+        {
+            "dim": "roll",
+            "CC": 11,
+            "send": true,
+            "solo": false,
+            "min_range": 179.9782841953418,
+            "max_range": 217.37660087330724,
+            "invert": false
+        },
+        {
+            "dim": "pitch",
+            "CC": 91,
+            "send": false,
+            "solo": false,
+            "min_range": 283.8010259437932,
+            "max_range": 302.02032702578697,
+            "invert": false
+        },
+        {
+            "dim": "yaw",
+            "CC": 92,
+            "send": false,
+            "solo": false,
+            "min_range": 187.51708519899555,
+            "max_range": 220.52194292228697,
+            "invert": false
+        },
+        {
+            "dim": "trigger",
+            "CC": 64,
+            "send": true,
+            "solo": false,
+            "min_range": 0.0,
+            "max_range": 1.0,
+            "invert": false
+        },
+        {
+            "dim": "velocity",
+            "CC": 7,
+            "send": false,
+            "solo": false,
+            "min_range": 0.3088780246234096,
+            "max_range": 1.6614769953928392,
+            "invert": false
+        }
+    ],
+    "half_y_mode": true,
+    "roll_x_factor": false,
+    "roll_y_factor": false,
+    "haptic": true,
+    "invert_toggle": false,
+    "mobile_box_mode": false
+}
