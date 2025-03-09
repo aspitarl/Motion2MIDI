@@ -244,13 +244,48 @@ class DistanceLayout(QtWidgets.QVBoxLayout):
     def change_windows(self):
         window1_name = self.window1_combobox.currentText()
         window2_name = self.window2_combobox.currentText()
-        window1 = self.parent.windows.get(window1_name)
-        window2 = self.parent.windows.get(window2_name)
+        window1 = self.parent.window_manager_layout.windows.get(window1_name)
+        window2 = self.parent.window_manager_layout.windows.get(window2_name)
         self.polling_thread.set_windows(window1, window2)
 
     def toggle_invert_toggles(self, state):
         for window in self.parent.windows.values():
             window.main_widget.settings_layout.checkbox_invert_toggle.setChecked(state == QtCore.Qt.Checked)
+
+class WindowManagerLayout(QtWidgets.QVBoxLayout):
+    def __init__(self, parent):
+        super(WindowManagerLayout, self).__init__(parent)
+        self.parent = parent
+        self.windows = {}
+
+        hlayout = QtWidgets.QHBoxLayout()
+        # Create a button to spawn new SingleMainWindow instances
+        self.spawn_button = QtWidgets.QPushButton("Spawn New Device Window")
+        self.spawn_button.clicked.connect(self.spawn_window)
+        hlayout.addWidget(self.spawn_button)
+
+        self.addLayout(hlayout)
+
+    def spawn_window(self):
+        window_name = f"Window {len(self.windows) + 1}"
+        window = SingleMainWindow(name=window_name)
+        self.windows[window_name] = window
+
+        self.parent.distance_layout.window1_combobox.addItem(window_name)
+        self.parent.distance_layout.window2_combobox.addItem(window_name)
+
+        window.show()
+        
+        # Position the new window to the side of the main window
+        main_window_geometry = self.geometry()
+        window.move(main_window_geometry.right() + 10, main_window_geometry.top())
+        
+        # Check if there are two windows and set the window B combo box to the second window
+        if len(self.windows) == 2:
+            window_names = list(self.windows.keys())
+            self.parent.distance_layout.window2_combobox.setCurrentText(window_names[1])
+
+
 
 class ControlWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -262,18 +297,12 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(central_widget)
         layout = QtWidgets.QVBoxLayout(central_widget)
         
-        hlayout = QtWidgets.QHBoxLayout()
-        # Create a button to spawn new SingleMainWindow instances
-        self.spawn_button = QtWidgets.QPushButton("Spawn New Device Window")
-        self.spawn_button.clicked.connect(self.spawn_window)
-        hlayout.addWidget(self.spawn_button)
+        # Add WindowManagerLayout at the top
+        self.window_manager_layout = WindowManagerLayout(parent=self)
+        layout.addLayout(self.window_manager_layout)
 
-        layout.addLayout(hlayout)
-
-        self.windows = {}
 
         # add splitter 
-
         layout.addWidget(QtWidgets.QSplitter())
         
         self.distance_layout = DistanceLayout(parent=self)
@@ -297,23 +326,6 @@ class ControlWindow(QtWidgets.QMainWindow):
         else:
             self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowStaysOnTopHint)
         self.show()
-
-    def spawn_window(self):
-        window_name = f"Window {len(self.windows) + 1}"
-        window = SingleMainWindow(name=window_name)
-        self.windows[window_name] = window
-        self.distance_layout.window1_combobox.addItem(window_name)
-        self.distance_layout.window2_combobox.addItem(window_name)
-        window.show()
-        
-        # Position the new window to the side of the main window
-        main_window_geometry = self.geometry()
-        window.move(main_window_geometry.right() + 10, main_window_geometry.top())
-        
-        # Check if there are two windows and set the window B combo box to the second window
-        if len(self.windows) == 2:
-            window_names = list(self.windows.keys())
-            self.distance_layout.window2_combobox.setCurrentText(window_names[1])
 
     def closeEvent(self, event):
         QtWidgets.QApplication.quit()  # Ensure the program exits when the control window is closed
