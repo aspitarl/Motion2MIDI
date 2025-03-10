@@ -248,6 +248,13 @@ class DistanceLayout(QtWidgets.QVBoxLayout):
         window2 = self.parent.window_manager_layout.windows.get(window2_name)
         self.polling_thread.set_windows(window1, window2)
 
+    def update_window_comboboxes(self):
+        self.window1_combobox.clear()
+        self.window2_combobox.clear()
+        for window_name in self.parent.window_manager_layout.windows.keys():
+            self.window1_combobox.addItem(window_name)
+            self.window2_combobox.addItem(window_name)
+
     def toggle_invert_toggles(self, state):
         for window in self.parent.windows.values():
             window.main_widget.settings_layout.checkbox_invert_toggle.setChecked(state == QtCore.Qt.Checked)
@@ -266,26 +273,43 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
 
         self.addLayout(hlayout)
 
+        # Create a list widget to display the spawned windows
+        self.window_list_widget = QtWidgets.QListWidget()
+        self.addWidget(self.window_list_widget)
+
+    def window_closed(self, window_obj):
+        window_name = window_obj.name
+        logging.debug(f"Window {window_name} closed")
+        self.windows.pop(window_name)
+        self.update_window_list()
+        self.parent.distance_layout.update_window_comboboxes()
+
     def spawn_window(self):
         window_name = f"Window {len(self.windows) + 1}"
         window = SingleMainWindow(name=window_name)
         self.windows[window_name] = window
-
-        self.parent.distance_layout.window1_combobox.addItem(window_name)
-        self.parent.distance_layout.window2_combobox.addItem(window_name)
-
+        window.closeEvent = lambda event: self.window_closed(window)
         window.show()
-        
         # Position the new window to the side of the main window
-        main_window_geometry = self.geometry()
+        main_window_geometry = self.parent.geometry()
         window.move(main_window_geometry.right() + 10, main_window_geometry.top())
-        
-        # Check if there are two windows and set the window B combo box to the second window
-        if len(self.windows) == 2:
-            window_names = list(self.windows.keys())
-            self.parent.distance_layout.window2_combobox.setCurrentText(window_names[1])
 
+        self.update_window_list()
+        self.parent.distance_layout.update_window_comboboxes()
 
+    def update_window_list(self):
+        self.window_list_widget.clear()
+        # Rename windows to reset the numbering
+        for i, window_name in enumerate(sorted(self.windows.keys()), start=1):
+            new_name = f"Window {i}"
+            window = self.windows.pop(window_name)
+            window.name = new_name
+            window.update_title()
+            self.windows[new_name] = window
+            self.window_list_widget.addItem(new_name)
+
+        print(self.windows.keys())
+        self.parent.distance_layout.update_window_comboboxes()
 
 class ControlWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
