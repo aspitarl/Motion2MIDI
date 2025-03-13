@@ -41,10 +41,10 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
         self.midi_layout.addWidget(self.pushbutton_refresh)
 
         midi_port_layout = QHBoxLayout()
-        self.combobox_midichans = QComboBox()
+        self.combobox_midi_ports = QComboBox()
         self.refresh_midi_ports()
         midi_port_layout.addWidget(QLabel("Port:"))
-        midi_port_layout.addWidget(self.combobox_midichans)
+        midi_port_layout.addWidget(self.combobox_midi_ports)
         self.midi_layout.addLayout(midi_port_layout)
 
         # Add MIDI channel selection
@@ -55,7 +55,7 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
         midi_channel_layout.addWidget(self.combobox_midi_channels)
         self.midi_layout.addLayout(midi_channel_layout)
 
-        self.combobox_midichans.currentIndexChanged.connect(self.combobox_selections_changed.emit)
+        self.combobox_midi_ports.currentIndexChanged.connect(self.combobox_selections_changed.emit)
         self.combobox_ovr_objects.currentIndexChanged.connect(self.combobox_selections_changed.emit)
         self.combobox_midi_channels.currentIndexChanged.connect(self.combobox_selections_changed.emit)
 
@@ -83,8 +83,8 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
     def refresh_midi_ports(self):
         available_ports = mido.get_output_names()
         available_ports = [p for p in available_ports if not any([e in p for e in midi_exclude_ports])]
-        self.combobox_midichans.clear()
-        self.combobox_midichans.addItems(available_ports)
+        self.combobox_midi_ports.clear()
+        self.combobox_midi_ports.addItems(available_ports)
 
     def discover_openvr_objects(self):
 
@@ -110,7 +110,7 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
         # select the first port that matches the criteria
         print(filtered_ports)
         if filtered_ports:
-            self.combobox_midichans.setCurrentText(filtered_ports[0])
+            self.combobox_midi_ports.setCurrentText(filtered_ports[0])
 
 
 import json
