@@ -124,6 +124,7 @@ class OSCPresetLayout(QtWidgets.QVBoxLayout):
             item = self.osc_preset_table.item(row, 0)
             if item and item.text() == message:
                 self.osc_preset_table.selectRow(row)
+                self.parent.update_subwindow_settings()
                 break
 
 if __name__ == "__main__":

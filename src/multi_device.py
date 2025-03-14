@@ -62,6 +62,11 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
 
     def update_window_table(self):
         self.window_table_widget.setRowCount(0)
+
+        # Make lists to store the comboboxes for each window
+        fileselect_comboboxes = []
+        midi_port_comboboxes = []
+        controller_comboboxes = []
         # Rename windows to reset the numbering
         for i, window_name in enumerate(sorted(self.windows.keys()), start=1):
             new_name = f"Window {i}"
@@ -70,34 +75,36 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
             window.update_title()
             self.windows[new_name] = window
 
-            # Add window name and settings combobox to the table
+            # Add window name and settings fileselect_combobox to the table
             row_position = self.window_table_widget.rowCount()
             self.window_table_widget.insertRow(row_position)
             window_name_item = QtWidgets.QTableWidgetItem(new_name)
             window_name_item.setFlags(window_name_item.flags() & ~QtCore.Qt.ItemIsEditable)  # Make item not editable
             self.window_table_widget.setItem(row_position, 0, window_name_item)
             
-            # Clone the combobox for the table
-            combobox = window.main_widget.settings_layout._fileselect_combo
-            combobox_clone = self.clone_combobox(combobox)
-            self.window_table_widget.setCellWidget(row_position, 1, combobox_clone)
-            self.connect_comboboxes(combobox, combobox_clone)
-
-            # Clone the controller, MIDI port, and MIDI channel comboboxes for the table
+            # Clone the fileselect_combobox for the table
             controller_combobox = self.clone_combobox(window.main_widget.connection_layout.combobox_ovr_objects)
             midi_port_combobox = self.clone_combobox(window.main_widget.connection_layout.combobox_midi_ports)
+            fileselect_combobox = self.clone_combobox(window.main_widget.settings_layout._fileselect_combo)
+
+            self.window_table_widget.setCellWidget(row_position, 1, fileselect_combobox)
             self.window_table_widget.setCellWidget(row_position, 2, controller_combobox)
             self.window_table_widget.setCellWidget(row_position, 3, midi_port_combobox)
+            self.connect_comboboxes(window.main_widget.settings_layout._fileselect_combo, fileselect_combobox)
             self.connect_comboboxes(window.main_widget.connection_layout.combobox_ovr_objects, controller_combobox)
             self.connect_comboboxes(window.main_widget.connection_layout.combobox_midi_ports, midi_port_combobox)
 
+            fileselect_comboboxes.append(fileselect_combobox)
+            midi_port_comboboxes.append(midi_port_combobox)
+            controller_comboboxes.append(controller_combobox)
+
         self.parent.distance_layout.update_window_comboboxes()
 
-    def clone_combobox(self, combobox):
+    def clone_combobox(self, fileselect_combobox):
         combobox_clone = QtWidgets.QComboBox()
-        for index in range(combobox.count()):
-            combobox_clone.addItem(combobox.itemText(index))
-        combobox_clone.setCurrentIndex(combobox.currentIndex())
+        for index in range(fileselect_combobox.count()):
+            combobox_clone.addItem(fileselect_combobox.itemText(index))
+        combobox_clone.setCurrentIndex(fileselect_combobox.currentIndex())
         return combobox_clone
 
     def connect_comboboxes(self, combobox1, combobox2):
@@ -152,6 +159,7 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.osc_widget.setVisible(False)  # Hide by default
         layout.addWidget(self.osc_widget)
 
+        self.osc_preset_layout.osc_preset_table.itemSelectionChanged.connect(self.update_subwindow_settings)
 
         #TODO: cannot get width to follow the table correctly
         # Set initial width of the main window
@@ -160,6 +168,23 @@ class ControlWindow(QtWidgets.QMainWindow):
 
         # Create menu bar
         self.create_menu_bar()
+
+    def update_subwindow_settings(self):
+        selected_rows = self.osc_preset_layout.osc_preset_table.selectionModel().selectedRows()
+        if len(selected_rows) > 0:
+            selected_row = selected_rows[0].row()
+            selected_preset = self.osc_preset_layout.osc_preset_table.item(selected_row, 0).text()
+            logging.debug(f"Selected preset: {selected_preset}")
+            for window_num, window in enumerate(self.window_manager_layout.windows.values()):
+                fileselect_combobox = window.main_widget.settings_layout._fileselect_combo
+                table_preset_name_for_window = self.osc_preset_layout.osc_preset_table.item(selected_row, window_num + 1).text()
+                table_preset_name_for_window = table_preset_name_for_window.strip()
+                # check if the preset name is in the fileselect_combobox
+                if table_preset_name_for_window in [fileselect_combobox.itemText(i) for i in range(fileselect_combobox.count())]:
+                    fileselect_combobox.setCurrentText(table_preset_name_for_window)
+                    fileselect_combobox.currentIndexChanged.emit(fileselect_combobox.currentIndex())
+                else:
+                    logging.warning(f"Preset {table_preset_name_for_window} not found in fileselect_combobox for window {window_num + 1}")
 
     def create_menu_bar(self):
         menubar = self.menuBar()
