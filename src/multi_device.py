@@ -250,6 +250,11 @@ def main():
     app.setStyleSheet("QFrame { border: 2px solid lightgray; } QLabel { border: none; }")
     # Use the ControlWindow instead of SideBySideMainWindow
     main_window = ControlWindow()
+
+    # spawn a new window
+    main_window.window_manager_layout.spawn_window()
+    main_window.window_manager_layout.spawn_window()
+
     main_window.show()
     main_window.setWindowTitle("MIDI Motion: Multi Device Window")
     
