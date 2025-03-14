@@ -6,11 +6,13 @@ from PyQt5.QtGui import QIcon
 from main import MainWindow as SingleMainWindow
 
 from distance_layout import DistanceLayout
+from osc_handler import OSCPresetLayout
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 class WindowManagerLayout(QtWidgets.QVBoxLayout):
     def __init__(self, parent):
@@ -143,6 +145,14 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.distance_widget.setVisible(False)  # Hide by default
         layout.addWidget(self.distance_widget)
 
+        # Wrap OSC preset layout in a QWidget
+        self.osc_widget = QtWidgets.QWidget()
+        self.osc_preset_layout = OSCPresetLayout(parent=self)
+        self.osc_widget.setLayout(self.osc_preset_layout)
+        self.osc_widget.setVisible(False)  # Hide by default
+        layout.addWidget(self.osc_widget)
+
+
         #TODO: cannot get width to follow the table correctly
         # Set initial width of the main window
         self.setMinimumWidth(380)
@@ -166,6 +176,12 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.show_distance_layout_action.setShortcut('Ctrl+D')  # Add keyboard shortcut
         view_menu.addAction(self.show_distance_layout_action)
 
+        self.show_osc_layout_action = QtWidgets.QAction('Show OSC Layout', self, checkable=True)
+        self.show_osc_layout_action.triggered.connect(self.toggle_osc_layout)
+        self.show_osc_layout_action.setChecked(False)  # Not checked by default
+        self.show_osc_layout_action.setShortcut('Ctrl+O')  # Add keyboard shortcut
+        view_menu.addAction(self.show_osc_layout_action)
+
     #TODO: this is not behaving as expected under multiple toggles
     def toggle_distance_layout(self, checked):
         # get the current height of the main window and distance widget
@@ -180,6 +196,18 @@ class ControlWindow(QtWidgets.QMainWindow):
         else:
             self.resize(self.width(), main_window_height - distance_widget_height)
 
+    def toggle_osc_layout(self, checked):
+        # get the current height of the main window and osc widget
+        main_window_height = self.height()
+        osc_widget_height = self.osc_widget.height()
+        self.osc_widget.setVisible(checked)
+        # set the height of the main window to the main window height - osc widget height
+        if checked:
+            default_osc_widget_height = 200
+            self.resize(self.width(), main_window_height + default_osc_widget_height)
+            self.osc_widget.setMinimumHeight(default_osc_widget_height)
+        else:
+            self.resize(self.width(), main_window_height - osc_widget_height)
 
     def toggle_always_on_top(self, checked):
         if checked:
