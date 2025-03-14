@@ -28,8 +28,9 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
 
         # Create a table widget to display the spawned windows and their settings
         self.window_table_widget = QtWidgets.QTableWidget(0, 4)
-        self.window_table_widget.setHorizontalHeaderLabels(["Window Name", "Settings ComboBox", "Controller", "MIDI Port"])
+        self.window_table_widget.setHorizontalHeaderLabels(["Name", "Setting", "Controller", "MIDI Port"])
         self.window_table_widget.cellDoubleClicked.connect(self.bring_window_to_front)
+        self.window_table_widget.setColumnWidth(0, 50)
         self.addWidget(self.window_table_widget)
 
     def window_closed(self, window_obj):
@@ -135,8 +136,17 @@ class ControlWindow(QtWidgets.QMainWindow):
         # add splitter 
         layout.addWidget(QtWidgets.QSplitter())
         
+        # Wrap DistanceLayout in a QWidget
+        self.distance_widget = QtWidgets.QWidget()
         self.distance_layout = DistanceLayout(parent=self)
-        layout.addLayout(self.distance_layout)
+        self.distance_widget.setLayout(self.distance_layout)
+        self.distance_widget.setVisible(False)  # Hide by default
+        layout.addWidget(self.distance_widget)
+
+        #TODO: cannot get width to follow the table correctly
+        # Set initial width of the main window
+        self.setMinimumWidth(380)
+
 
         # Create menu bar
         self.create_menu_bar()
@@ -149,6 +159,27 @@ class ControlWindow(QtWidgets.QMainWindow):
         self.always_on_top_action.triggered.connect(self.toggle_always_on_top)
         self.always_on_top_action.setShortcut('Ctrl+T')
         view_menu.addAction(self.always_on_top_action)
+
+        self.show_distance_layout_action = QtWidgets.QAction('Show Distance Layout', self, checkable=True)
+        self.show_distance_layout_action.triggered.connect(self.toggle_distance_layout)
+        self.show_distance_layout_action.setChecked(False)  # Not checked by default
+        self.show_distance_layout_action.setShortcut('Ctrl+D')  # Add keyboard shortcut
+        view_menu.addAction(self.show_distance_layout_action)
+
+    #TODO: this is not behaving as expected under multiple toggles
+    def toggle_distance_layout(self, checked):
+        # get the current height of the main window and distance widget
+        main_window_height = self.height()
+        distance_widget_height = self.distance_widget.height() 
+        self.distance_widget.setVisible(checked)
+        # set the height of the main window to the main window height - distance widget height
+        if checked:
+            default_distance_widget_height = 200
+            self.resize(self.width(), main_window_height + default_distance_widget_height)
+            self.distance_widget.setMinimumHeight(default_distance_widget_height)
+        else:
+            self.resize(self.width(), main_window_height - distance_widget_height)
+
 
     def toggle_always_on_top(self, checked):
         if checked:
