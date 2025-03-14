@@ -108,17 +108,13 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         return combobox_clone
 
     def connect_comboboxes(self, combobox1, combobox2):
-        def update_combobox2(index):
-            combobox2.blockSignals(True)
-            combobox2.setCurrentIndex(index)
-            combobox2.blockSignals(False)
-
+        #TODO: we are not connecting combobox1. this will keep adding connections from the comboboxes in subwindows to non-existent comboboxes in the table
+        # Need to figure out how to disconnect the previous connection
         def update_combobox1(index):
             combobox1.blockSignals(True)
             combobox1.setCurrentIndex(index)
             combobox1.blockSignals(False)
 
-        combobox1.currentIndexChanged.connect(update_combobox2)
         combobox2.currentIndexChanged.connect(update_combobox1)
 
     def bring_window_to_front(self, row, column):
