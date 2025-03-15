@@ -97,7 +97,7 @@ class MainWidget(QtWidgets.QWidget):
             raise Exception("No devices found, cannot connect. Try refreshing the list.")
 
         controller_idx = self.connection_layout.combobox_ovr_objects.currentIndex()
-        midi_port = self.connection_layout.combobox_midichans.currentText()
+        midi_port = self.connection_layout.combobox_midi_ports.currentText()
 
         self.datathread.contr = self.device_collection.present_devices[controller_idx]
         self.datathread.midiout = mido.open_output(midi_port)
@@ -228,7 +228,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.midi_listener_window.close()
         else:
             self.midi_listener_window.show()
-            current_output_port = self.main_widget.connection_layout.combobox_midichans.currentText()
+            current_output_port = self.main_widget.connection_layout.combobox_midi_ports.currentText()
             current_output_port_base = current_output_port.split(' ')[0]
             input_ports = mido.get_input_names()
             for port in input_ports:
