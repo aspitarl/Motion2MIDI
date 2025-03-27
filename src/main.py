@@ -262,10 +262,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.name == "Single":
             window_title = "Motion2MIDI"
         else:
-            window_title = "Motion2MIDI Multi: {}".format(self.name)
+            window_title = "{}: Motion2MIDI Multi".format(self.name)
         
         if contr:
-            window_title += " - {}".format(contr)       
+            window_title = "{} - ".format(contr) + window_title      
 
         self.setWindowTitle(window_title)
 

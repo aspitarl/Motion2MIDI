@@ -42,10 +42,26 @@ class Device():
         self.last_pose_dict = None
 
     def __repr__(self):
-        return "Device {}: {}".format(self.index, self.get_model())
+        return "{} (Dev. {}): ".format(self.get_model(), self.index)
 
     def get_model(self):
-        return str(self.ovr.getStringTrackedDeviceProperty(self.index, openvr.Prop_ModelNumber_String))
+        # mod_str = str(self.ovr.getStringTrackedDeviceProperty(self.index, openvr.Prop_ModelNumber_String))
+        serial_str = str(self.ovr.getStringTrackedDeviceProperty(self.index, openvr.Prop_SerialNumber_String))
+
+        replace_dict = {
+            'LHR-8A2F6CBD': 'Left Controller',
+            'LHR-1AB39A86': 'Left Vive',
+            'LHR-FB867046': 'Right Controller',
+            'LHR-4A9CEADD': 'Right Vive',
+        }
+
+        if serial_str in replace_dict:
+            mod_str = replace_dict[serial_str]
+        else:
+            mod_str = str(self.ovr.getStringTrackedDeviceProperty(self.index, openvr.Prop_ModelNumber_String))
+            print(f"Serial number {serial_str} for {mod_str} not in replace_dict, using default model name")
+
+        return mod_str
 
     def get_pose(self):
         pose = self.ovr.getDeviceToAbsoluteTrackingPose(openvr.TrackingUniverseStanding, 0, openvr.k_unMaxTrackedDeviceCount)

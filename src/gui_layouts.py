@@ -100,10 +100,15 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
         available_ports = mido.get_output_names()
         all_ports = [p for p in available_ports if not any([e in p for e in midi_exclude_ports])]
 
-        if 'left' in selected_ovr_object:
-            filtered_ports = [p for p in all_ports if 'left' in p.lower()]
-        elif 'right' in selected_ovr_object:
-            filtered_ports = [p for p in all_ports if 'right' in p.lower()]
+        #TODO: simplifty and  coordinate with default naming from serial number in Device class
+        if 'left controller' in selected_ovr_object:
+            filtered_ports = [p for p in all_ports if 'left controller' in p.lower()]
+        elif 'right controller' in selected_ovr_object:
+            filtered_ports = [p for p in all_ports if 'right controller' in p.lower()]
+        elif 'left vive' in selected_ovr_object:
+            filtered_ports = [p for p in all_ports if 'left vive' in p.lower()]
+        elif 'right vive' in selected_ovr_object:
+            filtered_ports = [p for p in all_ports if 'right vive' in p.lower()]
         else:
             filtered_ports = None
 
