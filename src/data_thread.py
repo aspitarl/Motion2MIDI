@@ -34,7 +34,7 @@ class DataThread(QtCore.QThread):
 
         self.input_dict = None
         self.pose_dict = None
-        self.sleep_time = 5/1000  # Default sleep time in seconds
+        self.sleep_time = 20/1000  # Default sleep time in seconds
 
         self.update_dicts()
         self.pp = pprint.PrettyPrinter(indent=4)  # Add this line

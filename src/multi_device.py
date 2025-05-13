@@ -249,7 +249,7 @@ def main():
 
     # spawn a new window
     main_window.window_manager_layout.spawn_window()
-    main_window.window_manager_layout.spawn_window()
+    # main_window.window_manager_layout.spawn_window()
 
     main_window.show()
     main_window.setWindowTitle("MIDI Motion: Multi Device Window")

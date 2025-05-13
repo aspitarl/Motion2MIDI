@@ -52,7 +52,7 @@ class MainWidget(QtWidgets.QWidget):
         sleep_time_label = QLabel("Sleep Time (ms):")
         self.sleep_time_spinbox = QSpinBox()
         self.sleep_time_spinbox.setRange(1, 1000)
-        self.sleep_time_spinbox.setValue(5)  # Default value
+        self.sleep_time_spinbox.setValue(20)  # Default value
         self.sleep_time_spinbox.valueChanged.connect(self.update_sleep_time)
         sleep_time_layout.addWidget(sleep_time_label)
         sleep_time_layout.addWidget(self.sleep_time_spinbox)
