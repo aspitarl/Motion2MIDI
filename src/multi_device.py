@@ -58,6 +58,9 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
     def create_close_event(self, window):
         def close_event(event):
             self.window_closed(window)
+            #TODO: having to replicate main.py windowCloseEvent here, as we are overriding the closeEvent method
+            window.main_widget.datathread.stop()
+            window.main_widget.disconnect_objects()
         return close_event
 
     def update_window_table(self):
