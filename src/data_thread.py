@@ -38,6 +38,8 @@ class DataThread(QtCore.QThread):
 
         self.update_dicts()
         self.pp = pprint.PrettyPrinter(indent=4)  # Add this line
+        self.active_mode_timeout = 5  # seconds, default 1 min
+        self.active_mode_tolerance = 0.05  # tolerance for value change
 
     def run(self):
         """Wrapper for main function with error handling"""
@@ -119,15 +121,38 @@ class DataThread(QtCore.QThread):
             if sleep_time > 0:
                 time.sleep(sleep_time)
 
+    def _data_changed(self, new_data, last_data):
+        """Return True if new_data differs from last_data by more than tolerance for any key."""
+        if last_data is None:
+            return True
+        for k in ['x','y','z']:
+            if k not in last_data:
+                return True
+            try:
+                diff_frac = abs(new_data[k] - last_data[k])/last_data[k]
+                print(f"{last_data[k]} {new_data[k]} {diff_frac}")
+                if diff_frac > self.active_mode_tolerance:
+                    return True
+            except Exception:
+                if new_data[k] != last_data[k]:
+                    return True
+        return False
+
     def active_mode(self):
-        """Active mode for sending MIDI data"""
+        """Active mode for sending MIDI data with timeout on unchanged data"""
         self.active_mode_running = True
         self.status_signal.emit("Active mode enabled")
 
         if self.contr.mobile_box_mode and self.contr.last_pose_dict is not None:
             self.contr.update_range_center()
 
+        last_sent_data = None
+        last_change_time = time.time()
+        sending_enabled = True
+
         while self.input_dict['enable_send']:
+            start = time.time()
+
             if self.active_mode_manual_bypass:
                 self.active_mode_manual_bypass = False
                 self.active_mode_running = False
@@ -138,14 +163,27 @@ class DataThread(QtCore.QThread):
             if self.pose_dict is None:
                 continue
 
-            self.input_dict = self.contr.get_controller_state_dict()
-            start = time.time()
-            trigger = self.input_dict['trigger']
+            # Use helper function for data change check with tolerance
+            if self._data_changed(self.pose_dict, last_sent_data):
+                last_sent_data = self.pose_dict.copy()
+                last_change_time = time.time()
+                if not sending_enabled:
+                    self.status_signal.emit("Data changed, resuming MIDI sending")
+                sending_enabled = True
 
-            scaled_data_dict = self.contr.get_scaled_data_dict(self.cc_dict, trigger)
-            for dim in scaled_data_dict:
-                cc = mido.Message('control_change', control=self.cc_dict[dim], value=scaled_data_dict[dim], channel=self.midi_channel)
-                self.midiout.send(cc)            
+            # Check for timeout
+            if sending_enabled and (time.time() - last_change_time > self.active_mode_timeout):
+                sending_enabled = False
+                self.status_signal.emit("No data change for timeout period, pausing MIDI sending")
+
+            self.input_dict = self.contr.get_controller_state_dict()
+
+            if sending_enabled:
+                trigger = self.input_dict['trigger']
+                scaled_data_dict = self.contr.get_scaled_data_dict(self.cc_dict, trigger)
+                for dim in scaled_data_dict:
+                    cc = mido.Message('control_change', control=self.cc_dict[dim], value=scaled_data_dict[dim], channel=self.midi_channel)
+                    self.midiout.send(cc)
 
             sleep_time = self.sleep_time - (time.time() - start)
             if sleep_time > 0:
