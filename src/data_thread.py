@@ -38,8 +38,8 @@ class DataThread(QtCore.QThread):
 
         self.update_dicts()
         self.pp = pprint.PrettyPrinter(indent=4)  # Add this line
-        self.active_mode_timeout = 5  # seconds, default 1 min
-        self.active_mode_tolerance = 0.05  # tolerance for value change
+        self.active_mode_timeout = 10  # seconds, default 1 min
+        self.active_mode_tolerance = 0.02  # tolerance for value change
 
     def run(self):
         """Wrapper for main function with error handling"""
@@ -130,7 +130,7 @@ class DataThread(QtCore.QThread):
                 return True
             try:
                 diff_frac = abs(new_data[k] - last_data[k])/last_data[k]
-                print(f"{last_data[k]} {new_data[k]} {diff_frac}")
+                # print(f"{last_data[k]} {new_data[k]} {diff_frac}")
                 if diff_frac > self.active_mode_tolerance:
                     return True
             except Exception:
