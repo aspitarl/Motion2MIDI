@@ -8,6 +8,7 @@ midi_exclude_ports = ['Microsoft GS Wavetable Synth', 'Focusrite']
 
 import mido
 from PyQt5.QtCore import pyqtSignal
+from PyQt5 import QtCore
 
 class ConnectionLayout(QtWidgets.QVBoxLayout):
 
@@ -206,6 +207,40 @@ class SettingsLayout(QVBoxLayout):
         extra_settings_layout.addWidget(self.checkbox_invert_toggle, 2, 1)
 
         self.addLayout(extra_settings_layout)
+
+        # Sleep time widget
+        sleep_time_layout = QHBoxLayout()
+        sleep_time_label = QLabel("Message Sleep Time (ms):")
+        self.sleep_time_spinbox = QSpinBox()
+        self.sleep_time_spinbox.setRange(1, 1000)
+        self.sleep_time_spinbox.setValue(20)
+        sleep_time_layout.addWidget(sleep_time_label)
+        sleep_time_layout.addWidget(self.sleep_time_spinbox)
+        self.addLayout(sleep_time_layout)
+
+        # Tolerance slider and timeout spinbox
+        tolerance_layout = QHBoxLayout()
+        tolerance_label = QLabel("Timeout Tolerance:")
+        self.tolerance_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+        self.tolerance_slider.setMinimum(0)
+        self.tolerance_slider.setMaximum(10)
+        self.tolerance_slider.setValue(2)
+        self.tolerance_slider.setSingleStep(1)
+        self.tolerance_slider.setTickInterval(1)
+        self.tolerance_slider.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self.tolerance_value_label = QLabel("0.02")
+        tolerance_layout.addWidget(tolerance_label)
+        tolerance_layout.addWidget(self.tolerance_slider)
+        tolerance_layout.addWidget(self.tolerance_value_label)
+        timeout_label = QLabel("Timeout (s):")
+        tolerance_layout.addWidget(timeout_label)
+        self.timeout_spinbox = QSpinBox()
+        self.timeout_spinbox.setMinimum(1)
+        self.timeout_spinbox.setMaximum(120)
+        self.timeout_spinbox.setValue(10)
+        self.timeout_spinbox.setSuffix(" s")
+        tolerance_layout.addWidget(self.timeout_spinbox)
+        self.addLayout(tolerance_layout)
 
     def update_file_list(self):
         self._fileselect_combo.blockSignals(True)
