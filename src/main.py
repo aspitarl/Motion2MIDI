@@ -49,7 +49,7 @@ class MainWidget(QtWidgets.QWidget):
 
         # Add sleep time setting
         sleep_time_layout = QHBoxLayout()
-        sleep_time_label = QLabel("Sleep Time (ms):")
+        sleep_time_label = QLabel("Message Sleep Time (ms):")
         self.sleep_time_spinbox = QSpinBox()
         self.sleep_time_spinbox.setRange(1, 1000)
         self.sleep_time_spinbox.setValue(20)  # Default value
@@ -58,6 +58,35 @@ class MainWidget(QtWidgets.QWidget):
         sleep_time_layout.addWidget(self.sleep_time_spinbox)
         all_settings_layout.addLayout(sleep_time_layout)
 
+        # Add active mode tolerance slider and timeout spinbox
+        tolerance_layout = QHBoxLayout()
+        tolerance_label = QLabel("Timeout Tolerance:")
+        self.tolerance_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+        self.tolerance_slider.setMinimum(0)
+        self.tolerance_slider.setMaximum(10)
+        self.tolerance_slider.setValue(2)  # Default 0.02
+        self.tolerance_slider.setSingleStep(1)
+        self.tolerance_slider.setTickInterval(1)
+        self.tolerance_slider.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self.tolerance_value_label = QLabel("0.02")
+        tolerance_layout.addWidget(tolerance_label)
+        tolerance_layout.addWidget(self.tolerance_slider)
+        tolerance_layout.addWidget(self.tolerance_value_label)
+
+        # Timeout label and spinbox
+        timeout_label = QLabel("Timeout (s):")
+        tolerance_layout.addWidget(timeout_label)
+        self.timeout_spinbox = QSpinBox()
+        self.timeout_spinbox.setMinimum(1)
+        self.timeout_spinbox.setMaximum(120)
+        self.timeout_spinbox.setValue(10)
+        self.timeout_spinbox.setSuffix(" s")
+        tolerance_layout.addWidget(self.timeout_spinbox)
+        all_settings_layout.addLayout(tolerance_layout)
+
+        self.tolerance_slider.valueChanged.connect(self.update_active_mode_tolerance)
+        self.timeout_spinbox.valueChanged.connect(self.update_active_mode_timeout)
+
         settings_frame = QFrame()
         settings_frame.setLayout(all_settings_layout)
         layout.addWidget(settings_frame)
@@ -65,6 +94,8 @@ class MainWidget(QtWidgets.QWidget):
         # Thread for obtaining and sending out data
         self.datathread = DataThread(parent=self)
         self.update_sleep_time(self.sleep_time_spinbox.value())
+        self.update_active_mode_tolerance(self.tolerance_slider.value())
+        self.update_active_mode_timeout(self.timeout_spinbox.value())
         self.settings_layout.load_data()
 
         # Add status info display
@@ -130,6 +161,21 @@ class MainWidget(QtWidgets.QWidget):
 
     def update_sleep_time(self, value):
         self.datathread.sleep_time = value / 1000.0  # Convert ms to seconds
+
+    def update_active_mode_tolerance(self, value):
+        tolerance = value / 100.0
+        self.tolerance_value_label.setText(f"{tolerance:.2f}")
+        self.datathread.active_mode_tolerance = tolerance
+        if tolerance == 0.0:
+            self.datathread.active_mode_timeout = None
+            self.timeout_spinbox.setEnabled(False)
+        else:
+            self.timeout_spinbox.setEnabled(True)
+            self.datathread.active_mode_timeout = self.timeout_spinbox.value()
+
+    def update_active_mode_timeout(self, value):
+        if self.datathread.active_mode_tolerance > 0.0:
+            self.datathread.active_mode_timeout = value
 
     def update_status_text_edit(self, status):
         self.status_text_edit.setText(status)

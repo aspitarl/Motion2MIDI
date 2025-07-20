@@ -171,10 +171,12 @@ class DataThread(QtCore.QThread):
                     self.status_signal.emit("Data changed, resuming MIDI sending")
                 sending_enabled = True
 
-            # Check for timeout
-            if sending_enabled and (time.time() - last_change_time > self.active_mode_timeout):
-                sending_enabled = False
-                self.status_signal.emit("No data change for timeout period, pausing MIDI sending")
+            # Check for timeout (only if timeout is enabled)
+            if sending_enabled and self.active_mode_timeout is not None:
+                elapsed = time.time() - last_change_time
+                if elapsed > self.active_mode_timeout:
+                    sending_enabled = False
+                    self.status_signal.emit("No data change for timeout period, pausing MIDI sending")
 
             self.input_dict = self.contr.get_controller_state_dict()
 
