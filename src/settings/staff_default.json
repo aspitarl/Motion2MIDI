@@ -78,5 +78,8 @@
     "roll_y_factor": false,
     "haptic": true,
     "invert_toggle": true,
-    "mobile_box_mode": false
+    "mobile_box_mode": false,
+    "message_sleep_time": 20,
+    "timeout_tolerance": 0.02,
+    "timeout_time": 10
 }

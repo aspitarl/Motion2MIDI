@@ -274,7 +274,9 @@ class SettingsLayout(QVBoxLayout):
                 'haptic': self.checkbox_enable_haptic.isChecked(),
                 'invert_toggle': self.checkbox_invert_toggle.isChecked(),
                 'mobile_box_mode': self.checkbox_mobile_box_mode.isChecked(),
-
+                'message_sleep_time': self.sleep_time_spinbox.value(),
+                'timeout_tolerance': self.tolerance_slider.value() / 100.0,
+                'timeout_time': self.timeout_spinbox.value()
             }
 
             # Write the settings dictionary to the JSON file
@@ -307,5 +309,9 @@ class SettingsLayout(QVBoxLayout):
             self.checkbox_enable_haptic.setChecked(settings['haptic'])
             self.checkbox_invert_toggle.setChecked(settings['invert_toggle'])
             self.checkbox_mobile_box_mode.setChecked(settings['mobile_box_mode'])
+            # Load sleep/tolerance/timeout if present
+            self.sleep_time_spinbox.setValue(settings['message_sleep_time'])
+            self.tolerance_slider.setValue(int(settings['timeout_tolerance'] * 100))
+            self.timeout_spinbox.setValue(settings['timeout_time'])
 
 
