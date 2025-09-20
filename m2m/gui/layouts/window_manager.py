@@ -20,7 +20,14 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         self.controller_table_widget = QtWidgets.QTableWidget(0, 4)
         self.controller_table_widget.setHorizontalHeaderLabels(["Name", "Setting", "Controller", "MIDI Port"])
         self.controller_table_widget.setColumnWidth(0, 50)
+        # Configure table to resize to content
+        self.controller_table_widget.verticalHeader().setVisible(False)
+        self.controller_table_widget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.controller_table_widget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.addWidget(self.controller_table_widget)
+        
+        # Set initial size for empty table
+        self.resize_table_to_content()
 
     def controller_removed(self, widget_name):
         logging.debug(f"Controller widget {widget_name} removed")
@@ -28,6 +35,8 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         self.update_controller_table()
         if hasattr(self.parent, 'distance_layout'):
             self.parent.distance_layout.update_window_comboboxes()
+        # Resize table to fit content after removal
+        self.resize_table_to_content()
 
     def add_controller_widget(self):
         widget_name = f"Controller {len(self.controller_widgets) + 1}"
@@ -106,6 +115,9 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
 
         if hasattr(self.parent, 'distance_layout'):
             self.parent.distance_layout.update_window_comboboxes()
+        
+        # Resize table to fit content
+        self.resize_table_to_content()
 
     def clone_combobox(self, original_combobox):
         combobox_clone = QtWidgets.QComboBox()
@@ -123,3 +135,16 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
             original_combobox.blockSignals(False)
 
         table_combobox.currentIndexChanged.connect(update_original_combobox)
+
+    def resize_table_to_content(self):
+        """Resize the table widget to fit its content exactly"""
+        if self.controller_table_widget.rowCount() == 0:
+            # If no rows, set minimum height to just show headers
+            header_height = self.controller_table_widget.horizontalHeader().height()
+            self.controller_table_widget.setFixedHeight(header_height + 4)  # +4 for border
+        else:
+            # Calculate total height needed for all rows plus header
+            header_height = self.controller_table_widget.horizontalHeader().height()
+            row_height = self.controller_table_widget.rowHeight(0)  # Assume all rows same height
+            total_height = header_height + (row_height * self.controller_table_widget.rowCount()) + 4  # +4 for border
+            self.controller_table_widget.setFixedHeight(total_height)
