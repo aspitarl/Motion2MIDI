@@ -10,9 +10,9 @@ from m2m.gui.layouts.window_manager import WindowManagerLayout
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
-class ControlWindow(QtWidgets.QMainWindow):
+class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        super(ControlWindow, self).__init__(parent)
+        super(MainWindow, self).__init__(parent)
         
         self.setWindowIcon(QIcon(os.path.join(script_path, 'icon/icon_multi.png')))
         # Create a central widget and set a vertical layout

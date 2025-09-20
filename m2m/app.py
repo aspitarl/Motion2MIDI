@@ -5,7 +5,7 @@ import logging
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QIcon
 
-from m2m.gui.main_window import ControlWindow
+from m2m.gui.main_window import MainWindow
 
 
 # Configure logging
@@ -16,8 +16,8 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     
     app.setStyleSheet("QFrame { border: 2px solid lightgray; } QLabel { border: none; }")
-    # Use the ControlWindow instead of SideBySideMainWindow
-    main_window = ControlWindow()
+    # Use the MainWindow instead of SideBySideMainWindow
+    main_window = MainWindow()
 
     # spawn a new window
     main_window.window_manager_layout.spawn_window()
