@@ -66,7 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #TODO: cannot get width to follow the table correctly
         # Set initial width of the main window
-        self.setMinimumWidth(800)  # Increased from 380 to accommodate wider controllers
+
 
         # Create menu bar
         self.create_menu_bar()
