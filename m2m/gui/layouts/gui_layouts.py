@@ -120,12 +120,12 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
 
 
 import json
-from pandas_grid import PandasGridWidget
+from m2m.gui.widgets.pandas_grid import PandasGridWidget
 import pandas as pd
 import os
 
 script_dir = os.path.dirname(__file__)
-settings_dir = os.path.join(script_dir, 'settings')
+settings_dir = os.path.join(script_dir, '..', '..', 'settings')
 
 class SettingsLayout(QVBoxLayout):
 

@@ -5,8 +5,13 @@ description = "package for Motion2MIDI"
 readme = "README.md"
 requires-python = ">=3.7"
 
+[project.scripts]
+motion2midi = "m2m.app:main"
+motion2midi-single = "m2m.gui.controller_window:main"
+motion2midi-main = "m2m.gui.main_window:main"
+
 [tool.setuptools]
-packages = ["m2m"]
+packages = ["m2m", "m2m.core", "m2m.gui", "m2m.gui.layouts", "m2m.gui.widgets", "m2m.utils"]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]

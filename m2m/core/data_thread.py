@@ -2,7 +2,7 @@ import os
 import time
 from PyQt5 import QtWidgets, QtCore
 import pprint  
-from openvr_utils import Device, NoDevice, RANGE_SET_BUTTON
+from m2m.core.openvr_utils import Device, NoDevice, RANGE_SET_BUTTON
 import mido
 
 class DataThread(QtCore.QThread):

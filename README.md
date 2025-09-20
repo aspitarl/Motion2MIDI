@@ -24,7 +24,7 @@ The software has been tested sending to a DAW through a virtual MIDI port such a
 
 ### Using the SteamVR Null Driver 
 
-It is possible to use the software with SteamVR running normally but I normally run it in 'No HMD' (head mounted display) mode. See [here](https://github.com/username223/SteamVRNoHeadset) for instructions to switch to no hmd mode. In this repository there are initial scripts to automate this process in `src/steamvr_config_utils`.
+It is possible to use the software with SteamVR running normally but I normally run it in 'No HMD' (head mounted display) mode. See [here](https://github.com/username223/SteamVRNoHeadset) for instructions to switch to no hmd mode. In this repository there are initial scripts to automate this process in `src/m2m/utils/steamvr_config`.
 
 
 ## Usage

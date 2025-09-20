@@ -57,7 +57,7 @@ class OSCPresetLayout(QtWidgets.QVBoxLayout):
         self.load_button.clicked.connect(self.load_csv_dialog)
         self.save_button.clicked.connect(self.save_csv_dialog)
 
-        default_preset_file = os.path.join(script_path, 'settings', "multi_contr_presets.csv")
+        default_preset_file = os.path.join(script_path, '..', 'settings', "multi_contr_presets.csv")
         self.load_csv(default_preset_file)
 
         self.osc_toggle_button.setChecked(True)

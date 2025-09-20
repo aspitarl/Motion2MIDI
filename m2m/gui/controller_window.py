@@ -10,17 +10,17 @@ import mido
 from mido.backends import rtmidi  # pyinstaller
 
 # Import custom modules
-from m2m.data_thread import DataThread
-from m2m.gui_layouts import ConnectionLayout, SettingsLayout
-from m2m.midi_listener import MidiListenerWindow
-from m2m.debug_console import DebugConsoleWindow
-from m2m.error_dialog import ErrorLogger
-from m2m.openvr_utils import DeviceCollection, NoDevice 
-from m2m.about import show_about_dialog
+from m2m.core.data_thread import DataThread
+from m2m.gui.layouts.gui_layouts import ConnectionLayout, SettingsLayout
+from m2m.gui.widgets.midi_listener import MidiListenerWindow
+from m2m.gui.widgets.debug_console import DebugConsoleWindow
+from m2m.gui.widgets.error_dialog import ErrorLogger
+from m2m.core.openvr_utils import DeviceCollection, NoDevice 
+from m2m.utils.about import show_about_dialog
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
-class MainWidget(QtWidgets.QWidget):
+class ControllerWidget(QtWidgets.QWidget):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.parent = parent
@@ -147,12 +147,12 @@ class MainWidget(QtWidgets.QWidget):
         self.disconnect_objects()  # TODO: what happens when an exception is thrown here, could be confusing 
         raise exception
 
-class MainWindow(QtWidgets.QMainWindow):
+class ControllerWindow(QtWidgets.QMainWindow):
     def __init__(self, name, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setWindowIcon(QIcon(os.path.join(script_path, 'icon/icon.png')))
 
-        self.main_widget = MainWidget(self)
+        self.main_widget = ControllerWidget(self)
         self.setCentralWidget(self.main_widget)
         self.main_widget.connection_layout.combobox_selections_changed.connect(self.connections_changed)
 
@@ -281,7 +281,7 @@ class MainWindow(QtWidgets.QMainWindow):
 def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setStyleSheet("QFrame { border: 2px solid lightgray; } QLabel { border: none; }")
-    main_window = MainWindow("Single")
+    main_window = ControllerWindow("Single")
     main_window.main_widget.main_window = main_window  # Weird way to allow main widget to change window title...
     main_window.resize(400, 200)  # Set initial window size small (smaller than widgets normally make it so smallest that is normally resized)
     main_window.show()

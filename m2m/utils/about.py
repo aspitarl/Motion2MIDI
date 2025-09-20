@@ -2,10 +2,10 @@ import os
 from PyQt5.QtWidgets import QMessageBox, QPushButton, QVBoxLayout, QDialog, QLabel, QTextEdit
 from PyQt5.QtCore import Qt
 
-from version import VERSION
+from m2m.utils.version import VERSION
 
 script_path = os.path.dirname(os.path.realpath(__file__))
-license_path = os.path.join(script_path, '..', 'LICENSE')
+license_path = os.path.join(script_path, '..', '..', '..', 'LICENSE')
 
 def show_about_dialog(parent):
     about_text = [
