@@ -11,7 +11,8 @@ from mido.backends import rtmidi  # pyinstaller
 
 # Import custom modules
 from m2m.core.data_thread import DataThread
-from m2m.gui.layouts.gui_layouts import ConnectionLayout, SettingsLayout
+from m2m.gui.layouts.connection_layout import ConnectionLayout
+from m2m.gui.layouts.settings_layout import SettingsLayout
 from m2m.gui.widgets.midi_listener import MidiListenerWindow
 from m2m.gui.widgets.debug_console import DebugConsoleWindow
 from m2m.gui.widgets.error_dialog import ErrorLogger
