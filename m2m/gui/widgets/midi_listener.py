@@ -80,11 +80,30 @@ class MidiListenerWindow(QtWidgets.QMainWindow):
         self.listener_thread = MidiListenerThread(cc_numbers=self.default_cc_numbers, parent=self)
         self.listener_thread.cc_received.connect(self.update_spin_box)
 
-        self._table_model = parent.main_widget.settings_layout.CC_grid_widget._table_model
-        self._table_model.dataChanged.connect(self.update_displayed_cc_numbers)
-
+        # Initialize table model reference - will be set when a controller is available
+        self._table_model = None
+        self._current_controller_widget = None
+        self.update_controller_reference()
 
         # self.change_midi_port(self.midi_port_combobox.currentText())
+
+    def update_controller_reference(self):
+        """Update the reference to the current controller widget's table model"""
+        # Get the first available controller widget from the main window
+        if hasattr(self.parent(), 'window_manager_layout') and hasattr(self.parent().window_manager_layout, 'controller_widgets'):
+            controller_widgets = self.parent().window_manager_layout.controller_widgets
+            if controller_widgets:
+                # Use the first controller widget
+                first_controller = next(iter(controller_widgets.values()))
+                if first_controller != self._current_controller_widget:
+                    # Disconnect from old model if it exists
+                    if self._table_model:
+                        self._table_model.dataChanged.disconnect(self.update_displayed_cc_numbers)
+                    
+                    # Connect to new model
+                    self._current_controller_widget = first_controller
+                    self._table_model = first_controller.settings_layout.CC_grid_widget._table_model
+                    self._table_model.dataChanged.connect(self.update_displayed_cc_numbers)
 
     def change_midi_port(self, port_name):
         self.listener_thread.set_midi_port(port_name)
@@ -101,12 +120,17 @@ class MidiListenerWindow(QtWidgets.QMainWindow):
         for spin_box in self.cc_spin_boxes.values():
             spin_box.valueChanged.disconnect(self.update_thread_cc_numbers)
         
-        df_table = self._table_model._data
-        # iterate through df_table and update cc_spin_boxes
-        for idx, row in df_table.iterrows():
-            cc_val = row['CC']
-            cc_spin_box = self.cc_spin_boxes[idx]
-            cc_spin_box.setValue(int(cc_val))
+        # Update controller reference in case controllers have changed
+        self.update_controller_reference()
+        
+        if self._table_model:
+            df_table = self._table_model._data
+            # iterate through df_table and update cc_spin_boxes
+            for idx, row in df_table.iterrows():
+                if idx in self.cc_spin_boxes:  # Make sure the index exists
+                    cc_val = row['CC']
+                    cc_spin_box = self.cc_spin_boxes[idx]
+                    cc_spin_box.setValue(int(cc_val))
 
         # for row, cc_spin_box in self.cc_spin_boxes.items():
         #     cc_val = df_table['CC'][row]

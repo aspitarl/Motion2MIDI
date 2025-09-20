@@ -243,20 +243,27 @@ class DistanceLayout(QtWidgets.QVBoxLayout):
             self.polling_thread.stop()
 
     def change_windows(self):
-        window1_name = self.window1_combobox.currentText()
-        window2_name = self.window2_combobox.currentText()
-        window1 = self.parent.window_manager_layout.windows.get(window1_name)
-        window2 = self.parent.window_manager_layout.windows.get(window2_name)
-        self.polling_thread.set_windows(window1, window2)
+        widget1_name = self.window1_combobox.currentText()
+        widget2_name = self.window2_combobox.currentText()
+        widget1 = self.parent.window_manager_layout.controller_widgets.get(widget1_name)
+        widget2 = self.parent.window_manager_layout.controller_widgets.get(widget2_name)
+        # Create fake window objects for the polling thread compatibility
+        if widget1 and widget2:
+            class FakeWindow:
+                def __init__(self, main_widget):
+                    self.main_widget = main_widget
+            fake_window1 = FakeWindow(widget1)
+            fake_window2 = FakeWindow(widget2)
+            self.polling_thread.set_windows(fake_window1, fake_window2)
 
     def update_window_comboboxes(self):
         self.window1_combobox.clear()
         self.window2_combobox.clear()
-        for window_name in self.parent.window_manager_layout.windows.keys():
-            self.window1_combobox.addItem(window_name)
-            self.window2_combobox.addItem(window_name)
+        for widget_name in self.parent.window_manager_layout.controller_widgets.keys():
+            self.window1_combobox.addItem(widget_name)
+            self.window2_combobox.addItem(widget_name)
 
     def toggle_invert_toggles(self, state):
         window_manager_layout = self.parent.window_manager_layout
-        for window in window_manager_layout.windows.values():
-            window.main_widget.settings_layout.checkbox_invert_toggle.setChecked(state == QtCore.Qt.Checked)
+        for widget in window_manager_layout.controller_widgets.values():
+            widget.settings_layout.checkbox_invert_toggle.setChecked(state == QtCore.Qt.Checked)

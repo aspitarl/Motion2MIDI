@@ -16,15 +16,15 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     
     app.setStyleSheet("QFrame { border: 2px solid lightgray; } QLabel { border: none; }")
-    # Use the MainWindow instead of SideBySideMainWindow
+    # Use the MainWindow with embedded controller widgets
     main_window = MainWindow()
 
-    # spawn a new window
-    main_window.window_manager_layout.spawn_window()
-    main_window.window_manager_layout.spawn_window()
+    # Add two controller widgets by default
+    main_window.window_manager_layout.add_controller_widget()
 
     main_window.show()
-    main_window.setWindowTitle("MIDI Motion: Multi Device Window")
+    main_window.resize(1000, 700)  # Set larger initial size for multiple controllers
+    main_window.setWindowTitle("Motion2MIDI: Multi Device Window")
     
     sys.exit(app.exec_())
 
