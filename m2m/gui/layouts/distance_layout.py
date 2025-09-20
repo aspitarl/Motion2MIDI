@@ -260,9 +260,17 @@ class DistanceLayout(QtWidgets.QVBoxLayout):
     def update_window_comboboxes(self):
         self.window1_combobox.clear()
         self.window2_combobox.clear()
-        for widget_name in self.parent.window_manager_layout.controller_widgets.keys():
+        widget_names = list(self.parent.window_manager_layout.controller_widgets.keys())
+        for widget_name in widget_names:
             self.window1_combobox.addItem(widget_name)
             self.window2_combobox.addItem(widget_name)
+        
+        # If there are more than 1 controller windows, set controller 2 as default for window2
+        if len(widget_names) > 1:
+            for i, widget_name in enumerate(widget_names):
+                if "Controller 2" in widget_name:
+                    self.window2_combobox.setCurrentIndex(i)
+                    break
 
     def toggle_invert_toggles(self, state):
         window_manager_layout = self.parent.window_manager_layout
