@@ -8,7 +8,7 @@ import numpy as np
 import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
+from . import midi_exclude_ports
 
 
 class PollingThread(QtCore.QThread):
@@ -150,7 +150,8 @@ class DistanceLayout(QtWidgets.QVBoxLayout):
 
         self.midi_port_combobox = QtWidgets.QComboBox()
         midi_port_names = mido.get_output_names()
-        self.midi_port_combobox.addItems(mido.get_output_names())
+        midi_port_names = [port for port in midi_port_names if not any(exclude_str in port for exclude_str in midi_exclude_ports)]
+        self.midi_port_combobox.addItems(midi_port_names)
         # if any port contain 'distance' in the name, select it
         for i, port_name in enumerate(midi_port_names):
             if 'distance' in port_name.lower():

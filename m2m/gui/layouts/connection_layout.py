@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
 import mido
 from PyQt5.QtCore import pyqtSignal
 
-midi_exclude_ports = ['Microsoft GS Wavetable Synth', 'Focusrite']
+from . import midi_exclude_ports
 
 class ConnectionLayout(QtWidgets.QVBoxLayout):
 
