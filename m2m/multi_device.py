@@ -3,10 +3,10 @@ import sys
 import logging  # Import logging module
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QIcon
-from main import MainWindow as SingleMainWindow
 
-from distance_layout import DistanceLayout
-from osc_handler import OSCPresetLayout
+from m2m.main import MainWindow as SingleMainWindow
+from m2m.distance_layout import DistanceLayout
+from m2m.osc_handler import OSCPresetLayout
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 

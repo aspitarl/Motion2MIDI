@@ -1,0 +1,13 @@
+[project]
+name = "m2m"
+version = "0.1.0"
+description = "package for Motion2MIDI"
+readme = "README.md"
+requires-python = ">=3.7"
+
+[tool.setuptools]
+packages = ["m2m"]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"

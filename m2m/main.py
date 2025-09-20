@@ -10,13 +10,13 @@ import mido
 from mido.backends import rtmidi  # pyinstaller
 
 # Import custom modules
-from data_thread import DataThread
-from gui_layouts import ConnectionLayout, SettingsLayout
-from midi_listener import MidiListenerWindow
-from debug_console import DebugConsoleWindow
-from error_dialog import ErrorLogger
-from openvr_utils import DeviceCollection, NoDevice 
-from about import show_about_dialog
+from m2m.data_thread import DataThread
+from m2m.gui_layouts import ConnectionLayout, SettingsLayout
+from m2m.midi_listener import MidiListenerWindow
+from m2m.debug_console import DebugConsoleWindow
+from m2m.error_dialog import ErrorLogger
+from m2m.openvr_utils import DeviceCollection, NoDevice 
+from m2m.about import show_about_dialog
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
