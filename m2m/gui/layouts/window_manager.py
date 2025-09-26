@@ -37,6 +37,9 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
             self.parent.distance_layout.update_window_comboboxes()
         # Resize table to fit content after removal
         self.resize_table_to_content()
+        # Auto-resize main window width
+        if hasattr(self.parent, 'auto_resize_window_width'):
+            self.parent.auto_resize_window_width()
 
     def add_controller_widget(self):
         widget_name = f"Controller {len(self.controller_widgets) + 1}"
@@ -50,6 +53,11 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         self.update_controller_table()
         if hasattr(self.parent, 'distance_layout'):
             self.parent.distance_layout.update_window_comboboxes()
+        # Resize table to fit content after addition
+        self.resize_table_to_content()
+        # Auto-resize main window width
+        if hasattr(self.parent, 'auto_resize_window_width'):
+            self.parent.auto_resize_window_width()
 
     def remove_controller_widget(self, widget_name):
         if widget_name in self.controller_widgets:
