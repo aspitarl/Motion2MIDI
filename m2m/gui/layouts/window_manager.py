@@ -1,6 +1,7 @@
 import logging
 from PyQt5 import QtWidgets, QtCore
 
+header_height = 25
 
 class WindowManagerLayout(QtWidgets.QVBoxLayout):
     def __init__(self, parent):
@@ -16,18 +17,27 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
 
         self.addLayout(hlayout)
 
+        # Create a scroll area for the table
+        self.scroll_area = QtWidgets.QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.scroll_area.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.scroll_area.setFixedHeight(100)  # Fixed height for scroll area
+
         # Create a table widget to display the spawned widgets and their settings
         self.controller_table_widget = QtWidgets.QTableWidget(0, 4)
         self.controller_table_widget.setHorizontalHeaderLabels(["Name", "Setting", "Controller", "MIDI Port"])
         self.controller_table_widget.setColumnWidth(0, 50)
         # Configure table to resize to content
         self.controller_table_widget.verticalHeader().setVisible(False)
+        self.controller_table_widget.horizontalHeader().setFixedHeight(header_height)
         self.controller_table_widget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.controller_table_widget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.addWidget(self.controller_table_widget)
         
-        # Set initial size for empty table
-        self.resize_table_to_content()
+        # Add table to scroll area
+        self.scroll_area.setWidget(self.controller_table_widget)
+        self.addWidget(self.scroll_area)
+        
 
     def controller_removed(self, widget_name):
         logging.debug(f"Controller widget {widget_name} removed")
@@ -36,7 +46,6 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         if hasattr(self.parent, 'distance_layout'):
             self.parent.distance_layout.update_window_comboboxes()
         # Resize table to fit content after removal
-        self.resize_table_to_content()
         # Auto-resize main window width
         if hasattr(self.parent, 'auto_resize_window_width'):
             self.parent.auto_resize_window_width()
@@ -53,8 +62,6 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         self.update_controller_table()
         if hasattr(self.parent, 'distance_layout'):
             self.parent.distance_layout.update_window_comboboxes()
-        # Resize table to fit content after addition
-        self.resize_table_to_content()
         # Auto-resize main window width
         if hasattr(self.parent, 'auto_resize_window_width'):
             self.parent.auto_resize_window_width()
@@ -87,6 +94,7 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
             # Add controller widget name and settings to the table
             row_position = self.controller_table_widget.rowCount()
             self.controller_table_widget.insertRow(row_position)
+            self.controller_table_widget.setRowHeight(row_position, 30)  # Set compact row height
             
             # Controller name (with remove button)
             name_widget = QtWidgets.QWidget()
@@ -124,11 +132,10 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         if hasattr(self.parent, 'distance_layout'):
             self.parent.distance_layout.update_window_comboboxes()
         
-        # Resize table to fit content
-        self.resize_table_to_content()
 
     def clone_combobox(self, original_combobox):
         combobox_clone = QtWidgets.QComboBox()
+        combobox_clone.setMaximumHeight(25)  # Set compact height
         for index in range(original_combobox.count()):
             combobox_clone.addItem(original_combobox.itemText(index))
         combobox_clone.setCurrentIndex(original_combobox.currentIndex())
@@ -141,18 +148,6 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
             original_combobox.blockSignals(True)
             original_combobox.setCurrentIndex(index)
             original_combobox.blockSignals(False)
-
         table_combobox.currentIndexChanged.connect(update_original_combobox)
 
-    def resize_table_to_content(self):
-        """Resize the table widget to fit its content exactly"""
-        if self.controller_table_widget.rowCount() == 0:
-            # If no rows, set minimum height to just show headers
-            header_height = self.controller_table_widget.horizontalHeader().height()
-            self.controller_table_widget.setFixedHeight(header_height + 4)  # +4 for border
-        else:
-            # Calculate total height needed for all rows plus header
-            header_height = self.controller_table_widget.horizontalHeader().height()
-            row_height = self.controller_table_widget.rowHeight(0)  # Assume all rows same height
-            total_height = header_height + (row_height * self.controller_table_widget.rowCount()) + 4  # +4 for border
-            self.controller_table_widget.setFixedHeight(total_height)
+

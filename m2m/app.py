@@ -20,10 +20,9 @@ def main():
     main_window = MainWindow()
 
     # Add two controller widgets by default
-    main_window.window_manager_layout.add_controller_widget()
 
     main_window.show()
-    main_window.resize(500, 500)  # Set larger initial size for multiple controllers with improved proportions
+    main_window.window_manager_layout.add_controller_widget()
     main_window.setWindowTitle("Motion2MIDI: Multi Device Window")
     
     sys.exit(app.exec_())
