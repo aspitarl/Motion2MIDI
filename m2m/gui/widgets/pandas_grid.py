@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QHeaderView, 
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtGui import QFont
 
 # missing imports
 
@@ -68,6 +69,8 @@ class PandasGridWidget(QWidget):
     def __init__(self, data, parent=None):
         super().__init__(parent)
 
+        # Set size policy to prevent widget from changing size
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         
         self._current_solo_checkbox = None
 
@@ -77,6 +80,8 @@ class PandasGridWidget(QWidget):
         self._table_model = PandasTableModel(data)
         self._table_model._new_data.connect(self._load_data)
         self._grid_layout = QGridLayout()
+        self._grid_layout.setSpacing(2)
+        self._grid_layout.setContentsMargins(0, 0, 0, 0)
         self._widgets = []
         self._widget_types = {
             'int64': QSpinBox,
@@ -97,12 +102,15 @@ class PandasGridWidget(QWidget):
         if self.layout() is not None:
             QWidget().setLayout(self.layout())
         self._grid_layout = QGridLayout()
+        self._grid_layout.setSpacing(2)
+        self._grid_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self._grid_layout)
 
         data = self._table_model._data
         for i, col in enumerate(data.columns):
             label = QLabel(column_name_lookup[col])
-            label.setSizePolicy(label.sizePolicy().horizontalPolicy(), QSizePolicy.Maximum)
+            label.setSizePolicy(label.sizePolicy().horizontalPolicy(), QSizePolicy.Fixed)
+            label.setMaximumHeight(20)
             self._grid_layout.addWidget(label, 0, i)
 
 
@@ -110,11 +118,18 @@ class PandasGridWidget(QWidget):
                 widget_type = self._widget_types[str(data.dtypes[col])]
                 widget = widget_type()
 
+                # Set compact size policy and maximum height for all widgets
+                widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+                widget.setMaximumHeight(20)
+
                 if widget_type == QDoubleSpinBox:
                     widget.setDecimals(2)
                     widget.setSingleStep(0.1)
                     widget.setMaximum(999.99)
                     widget.setMinimum(-999.99)
+                elif widget_type == QSpinBox:
+                    widget.setMaximum(127)
+                    widget.setMinimum(0)
 
                 widget = set_value_widget_type(widget, val)
                 signal = get_widget_change_signal(widget)
