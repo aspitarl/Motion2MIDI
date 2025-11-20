@@ -33,20 +33,13 @@ class MainWindow(QtWidgets.QMainWindow):
         # add splitter 
         layout.addWidget(QtWidgets.QSplitter())
         
-        # Add horizontal layout for controller widgets with scroll support
-        self.controllers_scroll = QtWidgets.QScrollArea()
+        # Add horizontal layout for controller widgets
         self.controllers_widget = QtWidgets.QWidget()
         self.controllers_layout = QtWidgets.QHBoxLayout(self.controllers_widget)
         self.controllers_layout.setContentsMargins(5, 5, 5, 5)  # Compact margins
         self.controllers_layout.setSpacing(5)  # Compact spacing between controllers
         
-        self.controllers_scroll.setWidget(self.controllers_widget)
-        self.controllers_scroll.setWidgetResizable(True)
-        self.controllers_scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.controllers_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.controllers_scroll.setMinimumHeight(300)  # Compact height
-        
-        layout.addWidget(self.controllers_scroll)
+        layout.addWidget(self.controllers_widget)
         
         # Wrap DistanceLayout in a QWidget
         self.distance_widget = QtWidgets.QWidget()
