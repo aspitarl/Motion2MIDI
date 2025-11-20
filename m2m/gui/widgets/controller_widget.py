@@ -22,8 +22,8 @@ class ControllerWidget(QtWidgets.QWidget):
         self.name = name
         self.device_collection = DeviceCollection()
         layout = QVBoxLayout()
-        layout.setSpacing(8)  # Add spacing between sections
-        layout.setContentsMargins(10, 10, 10, 10)  # Add margins around the widget
+        layout.setSpacing(3)  # Add spacing between sections
+        layout.setContentsMargins(5, 5, 5, 5)  # Add margins around the widget
         
         # Set minimum and maximum width for better horizontal layout
         self.setMinimumWidth(450)  # Increased from 300
@@ -33,7 +33,7 @@ class ControllerWidget(QtWidgets.QWidget):
         # Add name label at the top
         name_label = QLabel(f"<b>{self.name}</b>")
         name_label.setAlignment(QtCore.Qt.AlignCenter)
-        name_label.setStyleSheet("QLabel { background-color: lightblue; padding: 5px; margin-bottom: 5px; }")
+        name_label.setStyleSheet("QLabel { background-color: lightblue; padding: 2px; margin-bottom: 2px; }")
         layout.addWidget(name_label)
 
         # Connection layout with border
@@ -77,7 +77,7 @@ class ControllerWidget(QtWidgets.QWidget):
         status_layout.addWidget(status_label)
         self.status_text_edit = QTextEdit()
         self.status_text_edit.setReadOnly(True)
-        self.status_text_edit.setFixedHeight(30)  # Slightly increased height
+        self.status_text_edit.setFixedHeight(20)  # Compact height
         self.status_text_edit.setMinimumWidth(200)  # Ensure minimum width
         status_layout.addWidget(self.status_text_edit)
         layout.addLayout(status_layout)

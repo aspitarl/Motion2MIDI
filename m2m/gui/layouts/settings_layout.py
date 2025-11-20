@@ -16,10 +16,15 @@ class SettingsLayout(QVBoxLayout):
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        # Set compact spacing for this layout
+        self.setSpacing(3)
+        self.setContentsMargins(0, 0, 0, 0)
 
         self.parent = parent
 
         self.fileio_layout = QHBoxLayout()
+        self.fileio_layout.setSpacing(3)
 
 
         self._refresh_button = QPushButton("Refresh")
@@ -84,6 +89,8 @@ class SettingsLayout(QVBoxLayout):
         # Extra settings
         # make a grid layout for all extra settings checkboxes and add it to the main layout
         extra_settings_layout = QGridLayout()
+        extra_settings_layout.setSpacing(2)
+        extra_settings_layout.setContentsMargins(0, 0, 0, 0)
         extra_settings_layout.addWidget(self.checkbox_ymode, 0, 0)
         extra_settings_layout.addWidget(self.checkbox_mobile_box_mode, 0, 1)
         extra_settings_layout.addWidget(self.checkbox_roll_x_factor, 1, 0)
@@ -95,6 +102,7 @@ class SettingsLayout(QVBoxLayout):
 
         # Sleep time widget
         sleep_time_layout = QHBoxLayout()
+        sleep_time_layout.setSpacing(3)
         sleep_time_label = QLabel("Message Sleep Time (ms):")
         self.sleep_time_spinbox = QSpinBox()
         self.sleep_time_spinbox.setRange(1, 1000)
@@ -105,6 +113,7 @@ class SettingsLayout(QVBoxLayout):
 
         # Tolerance slider and timeout spinbox
         tolerance_layout = QHBoxLayout()
+        tolerance_layout.setSpacing(3)
         tolerance_label = QLabel("Timeout Tolerance:")
         self.tolerance_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
         self.tolerance_slider.setMinimum(0)

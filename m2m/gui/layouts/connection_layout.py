@@ -14,10 +14,15 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
     def __init__(self, device_collection, *args, **kwargs):
 
         super().__init__(*args, **kwargs)
+        
+        # Set compact spacing for this layout
+        self.setSpacing(3)
+        self.setContentsMargins(0, 0, 0, 0)
 
         self.dc = device_collection
 
         section_layout = QHBoxLayout()
+        section_layout.setSpacing(3)
 
         #OpenVR layout
         openvr_hlayout = QVBoxLayout()

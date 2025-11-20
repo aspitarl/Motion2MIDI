@@ -37,14 +37,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.controllers_scroll = QtWidgets.QScrollArea()
         self.controllers_widget = QtWidgets.QWidget()
         self.controllers_layout = QtWidgets.QHBoxLayout(self.controllers_widget)
-        self.controllers_layout.setContentsMargins(10, 10, 10, 10)  # Increased margins
-        self.controllers_layout.setSpacing(15)  # Increased spacing between controllers
+        self.controllers_layout.setContentsMargins(5, 5, 5, 5)  # Compact margins
+        self.controllers_layout.setSpacing(5)  # Compact spacing between controllers
         
         self.controllers_scroll.setWidget(self.controllers_widget)
         self.controllers_scroll.setWidgetResizable(True)
         self.controllers_scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.controllers_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.controllers_scroll.setMinimumHeight(400)  # Increased from 200
+        self.controllers_scroll.setMinimumHeight(300)  # Compact height
         
         layout.addWidget(self.controllers_scroll)
         
