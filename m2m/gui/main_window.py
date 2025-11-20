@@ -255,7 +255,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Ensure the scroll area updates its size
         self.controllers_widget.updateGeometry()
         # Auto-resize window width to accommodate the new controller
-        self.auto_resize_window_width()
+        self.adjustSize()
         return controller_widget
 
     def remove_controller_widget(self, widget):
@@ -289,28 +289,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Ensure the scroll area updates its size
         self.controllers_widget.updateGeometry()
         # Auto-resize window width to reflect the removal
-        self.auto_resize_window_width()
+        self.adjustSize()
 
-    def auto_resize_window_width(self):
-        """Automatically resize window width based on number of controllers"""
-        controller_count = len([w for w in [self.controllers_layout.itemAt(i).widget() 
-                              for i in range(self.controllers_layout.count())] 
-                              if hasattr(w, 'is_connected')])
-        
-        # Base width for the window manager and other elements
-        base_width = 400
-        # Width per controller (approximate)
-        controller_width = 350
-        # Calculate total desired width
-        total_width = base_width + (controller_count * controller_width)
-        
-        # Apply reasonable bounds
-        min_width = 800
-        max_width = 1800
-        target_width = max(min_width, min(max_width, total_width))
-        
-        # Resize maintaining current height
-        self.resize(target_width, self.height())
 
     def update_title(self):
         """Update the main window title based on connected controllers"""
