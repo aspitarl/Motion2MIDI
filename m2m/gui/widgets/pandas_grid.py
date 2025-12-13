@@ -130,6 +130,9 @@ class PandasGridWidget(QWidget):
                 elif widget_type == QSpinBox:
                     widget.setMaximum(127)
                     widget.setMinimum(0)
+                elif widget_type == QLineEdit:
+                    widget.setMaximumWidth(80)
+                    widget.setReadOnly(True)
 
                 widget = set_value_widget_type(widget, val)
                 signal = get_widget_change_signal(widget)
