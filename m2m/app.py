@@ -6,6 +6,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QIcon
 
 from m2m.gui.main_window import MainWindow
+from m2m.gui.theme import apply_dark_theme
 
 
 # Configure logging
@@ -15,7 +16,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 def main():
     app = QtWidgets.QApplication(sys.argv)
     
-    app.setStyleSheet("QFrame { border: 2px solid lightgray; } QLabel { border: none; }")
+    apply_dark_theme(app)
     # Use the MainWindow with embedded controller widgets
     main_window = MainWindow()
 

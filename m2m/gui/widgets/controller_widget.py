@@ -33,7 +33,7 @@ class ControllerWidget(QtWidgets.QWidget):
         # Add name label at the top
         name_label = QLabel(f"<b>{self.name}</b>")
         name_label.setAlignment(QtCore.Qt.AlignCenter)
-        name_label.setStyleSheet("QLabel { background-color: lightblue; padding: 2px; margin-bottom: 2px; }")
+        name_label.setStyleSheet("QLabel { background-color: #2a82da; color: white; padding: 2px; margin-bottom: 2px; }")
         layout.addWidget(name_label)
 
         # Connection layout with border

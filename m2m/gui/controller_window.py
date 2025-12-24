@@ -150,9 +150,11 @@ class ControllerWindow(QtWidgets.QMainWindow):
 
         self.setWindowTitle(window_title)
 
+from m2m.gui.theme import apply_dark_theme
+
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    app.setStyleSheet("QFrame { border: 2px solid lightgray; } QLabel { border: none; }")
+    apply_dark_theme(app)
     main_window = ControllerWindow("Single")
     main_window.main_widget.main_window = main_window  # Weird way to allow main widget to change window title...
     main_window.resize(400, 200)  # Set initial window size small (smaller than widgets normally make it so smallest that is normally resized)

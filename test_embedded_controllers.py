@@ -11,11 +11,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from PyQt5 import QtWidgets
 from m2m.gui.main_window import MainWindow
+from m2m.gui.theme import apply_dark_theme
 
 def test_main_window():
     """Test the main window with embedded controller widgets"""
     app = QtWidgets.QApplication(sys.argv)
-    app.setStyleSheet("QFrame { border: 2px solid lightgray; } QLabel { border: none; }")
+    apply_dark_theme(app)
     
     # Create main window
     main_window = MainWindow()
