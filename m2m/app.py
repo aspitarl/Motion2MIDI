@@ -7,7 +7,7 @@ from PyQt5.QtGui import QIcon
 
 from m2m.gui.main_window import MainWindow
 from m2m.gui.theme import apply_dark_theme
-
+from mido.backends import rtmidi  # pyinstaller
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
