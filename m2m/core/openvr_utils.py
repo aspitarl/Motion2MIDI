@@ -157,9 +157,8 @@ class Device():
                 self.range_dict[dim]['min'] = center - size / 2
                 self.range_dict[dim]['max'] = center + size / 2
 
-    def get_scaled_data_dict(self, cc_dict, trigger):
+    def get_scaled_data_dict(self, cc_dict, trigger, pose_dict):
         scaled_data_dict = {}
-        pose_dict = self.get_pose_dict()
 
         for dim in cc_dict:
             if cc_dict[dim]:

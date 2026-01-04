@@ -159,9 +159,10 @@ class DataThread(QtCore.QThread):
                 self.status_signal.emit("Active mode exited with manual bypass")
                 return
 
-            self.pose_dict = self.contr.get_pose_dict()
-            if self.pose_dict is None:
+            new_pose_dict = self.contr.get_pose_dict()
+            if new_pose_dict is None:
                 continue
+            self.pose_dict = new_pose_dict
 
             # Use helper function for data change check with tolerance
             if self._data_changed(self.pose_dict, last_sent_data):
@@ -182,7 +183,7 @@ class DataThread(QtCore.QThread):
 
             if sending_enabled:
                 trigger = self.input_dict['trigger']
-                scaled_data_dict = self.contr.get_scaled_data_dict(self.cc_dict, trigger)
+                scaled_data_dict = self.contr.get_scaled_data_dict(self.cc_dict, trigger, self.pose_dict)
                 for dim in scaled_data_dict:
                     cc = mido.Message('control_change', control=self.cc_dict[dim], value=scaled_data_dict[dim], channel=self.midi_channel)
                     self.midiout.send(cc)
