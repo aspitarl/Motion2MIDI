@@ -27,7 +27,7 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         # Create a table widget to display the spawned widgets and their settings
         self.controller_table_widget = QtWidgets.QTableWidget(0, 4)
         self.controller_table_widget.setHorizontalHeaderLabels(["Name", "Setting", "Controller", "MIDI Port"])
-        self.controller_table_widget.setColumnWidth(0, 50)
+        self.controller_table_widget.setColumnWidth(0, 100)
         # Configure table to resize to content
         self.controller_table_widget.verticalHeader().setVisible(False)
         self.controller_table_widget.horizontalHeader().setFixedHeight(header_height)
