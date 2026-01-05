@@ -66,8 +66,9 @@ class PandasTableModel(QAbstractTableModel):
 
 
 class PandasGridWidget(QWidget):
-    def __init__(self, data, parent=None):
+    def __init__(self, data, parent=None, available_options=None):
         super().__init__(parent)
+        self.available_options = available_options
 
         # Set size policy to prevent widget from changing size
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
@@ -115,32 +116,40 @@ class PandasGridWidget(QWidget):
 
 
             for j, val in enumerate(data[col]):
-                widget_type = self._widget_types[str(data.dtypes[col])]
-                widget = widget_type()
-
-                # Set compact size policy and maximum height for all widgets
-                widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-                widget.setMaximumHeight(20)
-
-                if widget_type == QDoubleSpinBox:
-                    widget.setDecimals(2)
-                    widget.setSingleStep(0.1)
-                    widget.setMaximum(999.99)
-                    widget.setMinimum(-999.99)
-                elif widget_type == QSpinBox:
-                    widget.setMaximum(127)
-                    widget.setMinimum(0)
-                elif widget_type == QLineEdit:
-                    widget.setMaximumWidth(80)
-                    widget.setReadOnly(True)
-
-                widget = set_value_widget_type(widget, val)
-                signal = get_widget_change_signal(widget)
-
-                if widget_type == QCheckBox:
-                    signal.connect(lambda state, i=i, j=j: self._table_model.setData(self._table_model.index(j, i), bool(state), Qt.EditRole))
+                if col == 'dim' and self.available_options:
+                    widget = QComboBox()
+                    widget.addItems(self.available_options)
+                    widget.setCurrentText(str(val))
+                    widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+                    widget.setMaximumHeight(20)
+                    widget.currentTextChanged.connect(lambda text, i=i, j=j: self._table_model.setData(self._table_model.index(j, i), text, Qt.EditRole))
                 else:
-                    signal.connect(lambda value, i=i, j=j: self._table_model.setData(self._table_model.index(j, i), value, Qt.EditRole))
+                    widget_type = self._widget_types[str(data.dtypes[col])]
+                    widget = widget_type()
+
+                    # Set compact size policy and maximum height for all widgets
+                    widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+                    widget.setMaximumHeight(20)
+
+                    if widget_type == QDoubleSpinBox:
+                        widget.setDecimals(2)
+                        widget.setSingleStep(0.1)
+                        widget.setMaximum(999.99)
+                        widget.setMinimum(-999.99)
+                    elif widget_type == QSpinBox:
+                        widget.setMaximum(127)
+                        widget.setMinimum(0)
+                    elif widget_type == QLineEdit:
+                        widget.setMaximumWidth(80)
+                        widget.setReadOnly(True)
+
+                    widget = set_value_widget_type(widget, val)
+                    signal = get_widget_change_signal(widget)
+
+                    if widget_type == QCheckBox:
+                        signal.connect(lambda state, i=i, j=j: self._table_model.setData(self._table_model.index(j, i), bool(state), Qt.EditRole))
+                    else:
+                        signal.connect(lambda value, i=i, j=j: self._table_model.setData(self._table_model.index(j, i), value, Qt.EditRole))
 
                 if col == 'solo':
                     widget.stateChanged.connect(lambda state, row=j: self._disable_send_checkboxes(state, row))
@@ -196,6 +205,24 @@ class PandasGridWidget(QWidget):
 
 
         self._load_data()
+
+    def add_row(self):
+        new_row = pd.DataFrame([{
+            'dim': self.available_options[0] if self.available_options else 'x',
+            'CC': 0,
+            'send': False,
+            'solo': False,
+            'min_range': 0.0,
+            'max_range': 1.0,
+            'invert': False
+        }])
+        self._table_model._data = pd.concat([self._table_model._data, new_row], ignore_index=True)
+        self._load_data()
+
+    def remove_row(self):
+        if len(self._table_model._data) > 0:
+            self._table_model._data = self._table_model._data.iloc[:-1]
+            self._load_data()
               
 
 

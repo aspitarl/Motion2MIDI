@@ -6,6 +6,7 @@ from PyQt5 import QtCore
 
 import json
 from m2m.gui.widgets.pandas_grid import PandasGridWidget
+from m2m.core.custom_mappings import STANDARD_DIMENSIONS, CUSTOM_EQUATIONS
 import pandas as pd
 import os
 
@@ -58,9 +59,20 @@ class SettingsLayout(QVBoxLayout):
         # df_initial = pd.read_json(settings['dataframe'], orient='split')
         df_initial = pd.DataFrame(settings['dataframe'])
         # use first file in settings directory as default 
-        self.CC_grid_widget = PandasGridWidget(df_initial)
+        available_options = STANDARD_DIMENSIONS + list(CUSTOM_EQUATIONS.keys())
+        self.CC_grid_widget = PandasGridWidget(df_initial, available_options=available_options)
 
         self.addWidget(self.CC_grid_widget)
+
+        # Add Row / Remove Row buttons
+        row_buttons_layout = QHBoxLayout()
+        self.add_row_button = QPushButton("Add Row")
+        self.add_row_button.clicked.connect(self.CC_grid_widget.add_row)
+        self.remove_row_button = QPushButton("Remove Row")
+        self.remove_row_button.clicked.connect(self.CC_grid_widget.remove_row)
+        row_buttons_layout.addWidget(self.add_row_button)
+        row_buttons_layout.addWidget(self.remove_row_button)
+        self.addLayout(row_buttons_layout)
 
 
         #TODO: these also are janky data communications between mainwidget and thread, like signal select layout. 

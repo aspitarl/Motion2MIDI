@@ -1,6 +1,7 @@
 import numpy as np
 import openvr
 import math
+from m2m.core.custom_mappings import CUSTOM_EQUATIONS
 
 # Constants
 MIDI_CC_MAX = 127
@@ -108,12 +109,23 @@ class Device():
             'yaw': positionarray[3],
             'pitch': positionarray[4],
             'roll': positionarray[5],
+            'vx': velocity.v[0],
+            'vy': velocity.v[1],
+            'vz': velocity.v[2],
             'velocity': float(np.linalg.norm([velocity.v[0], velocity.v[1], velocity.v[2]])),
         }
 
         # Add angle offsets with modulo 360
         for dim in ['yaw', 'pitch', 'roll']:
             pose_dict[dim] = (pose_dict[dim] + self.angle_offsets[dim]) % 360
+
+        # Add custom equations
+        for key, func in CUSTOM_EQUATIONS.items():
+            try:
+                pose_dict[key] = func(pose_dict)
+            except Exception as e:
+                print(f"Error calculating custom equation {key}: {e}")
+                pose_dict[key] = 0.0
 
         return pose_dict
 
