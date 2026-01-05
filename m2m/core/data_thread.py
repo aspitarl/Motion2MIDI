@@ -230,8 +230,10 @@ class DataThread(QtCore.QThread):
         df_table = self._table_model._data
         for i, dim in enumerate(self.contr.range_dict):
             # find row number of the dimension
-            idx = df_table[df_table['dim'] == dim].index[0]
-            df_table.loc[idx, 'min_range'] = self.contr.range_dict[dim]['min']
-            df_table.loc[idx, 'max_range'] = self.contr.range_dict[dim]['max']
+            matching_rows = df_table[df_table['dim'] == dim]
+            if not matching_rows.empty:
+                idx = matching_rows.index[0]
+                df_table.loc[idx, 'min_range'] = self.contr.range_dict[dim]['min']
+                df_table.loc[idx, 'max_range'] = self.contr.range_dict[dim]['max']
 
         self._table_model.set_new_data(df_table)
