@@ -4,7 +4,8 @@ STANDARD_DIMENSIONS = [
     'x', 'y', 'z',
     'vx', 'vy', 'vz',
     'velocity',
-    'yaw', 'pitch', 'roll'
+    'yaw', 'pitch', 'roll',
+    'trigger'
 ]
 
 CUSTOM_EQUATIONS = {
