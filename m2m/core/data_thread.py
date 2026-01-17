@@ -221,6 +221,11 @@ class DataThread(QtCore.QThread):
         self.cc_dict = dict(zip(df_table_enabled['dim'], df_table_enabled['CC']))
 
         if self.contr:
+            if 'invert' in df_table_enabled.columns:
+                self.contr.invert_dict = dict(zip(df_table_enabled['dim'], df_table_enabled['invert'].astype(bool)))
+            else:
+                self.contr.invert_dict = {}
+
             self.contr.range_dict = {   
                 row['dim']: {'min': df_table['min_range'][idx].item(), 'max': df_table['max_range'][idx].item()} for idx, row in df_table.iterrows()
             }

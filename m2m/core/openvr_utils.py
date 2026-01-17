@@ -33,6 +33,7 @@ class Device():
         self.ovr = ovr
         self.index = index
         self.range_dict = None
+        self.invert_dict = {}
         self.angle_offsets = {'yaw': 0, 'pitch': 0, 'roll': 0}
         self.haptic_loop_counter = 0
         self.enable_half_y = True
@@ -178,7 +179,8 @@ class Device():
                     data_scaled = int(trigger) * MIDI_CC_MAX
                 else:
                     half_mode = (dim == 'y') and (trigger == 1) if self.enable_half_y else False
-                    data_scaled = self.get_scaled_data_dim(pose_dict, dim, half_mode)
+                    invert = self.invert_dict.get(dim, False)
+                    data_scaled = self.get_scaled_data_dim(pose_dict, dim, half_mode, invert)
 
                 if dim == 'y' and self.enable_haptic:
                     self.haptic_loop_counter += 1
@@ -191,7 +193,7 @@ class Device():
 
         return scaled_data_dict
 
-    def get_scaled_data_dim(self, pose_dict, dim, half_mode):
+    def get_scaled_data_dim(self, pose_dict, dim, half_mode, invert=False):
         length = self.range_dict[dim]['max'] - self.range_dict[dim]['min']
         relative_dist = pose_dict[dim] - self.range_dict[dim]['min']
 
@@ -202,6 +204,9 @@ class Device():
             scaled = (relative_dist / halflength) * MIDI_CC_MAX
         else:
             scaled = (relative_dist / length) * MIDI_CC_MAX
+
+        if invert:
+            scaled = MIDI_CC_MAX - scaled
 
         scaled = max(0, min(MIDI_CC_MAX, scaled))
         scaled = curve_quad(scaled, 1)
