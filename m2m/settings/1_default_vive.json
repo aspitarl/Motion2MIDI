@@ -1,0 +1,49 @@
+{
+    "dataframe": [
+        {
+            "dim": "vy_magnitude",
+            "CC": 1,
+            "send": true,
+            "solo": false,
+            "min_range": 0.00055339076789096,
+            "max_range": 1.1942715644836426,
+            "invert": false
+        },
+        {
+            "dim": "x",
+            "CC": 2,
+            "send": true,
+            "solo": false,
+            "min_range": -1.8488224744796753,
+            "max_range": -1.629929542541504,
+            "invert": true
+        },
+        {
+            "dim": "z",
+            "CC": 3,
+            "send": true,
+            "solo": false,
+            "min_range": -0.7284977436065674,
+            "max_range": -0.48467695713043213,
+            "invert": true
+        },
+        {
+            "dim": "velocity",
+            "CC": 0,
+            "send": false,
+            "solo": false,
+            "min_range": 0.09460171425722452,
+            "max_range": 1.1988368305768276,
+            "invert": false
+        }
+    ],
+    "half_y_mode": true,
+    "roll_x_factor": false,
+    "roll_y_factor": false,
+    "haptic": true,
+    "invert_toggle": false,
+    "mobile_box_mode": false,
+    "message_sleep_time": 20,
+    "timeout_tolerance": 0.02,
+    "timeout_time": 10
+}

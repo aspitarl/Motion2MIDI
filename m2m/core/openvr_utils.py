@@ -46,9 +46,12 @@ class Device():
     def __repr__(self):
         return "{} (Dev. {}): ".format(self.get_model(), self.index)
 
+    def get_serial(self):
+        return str(self.ovr.getStringTrackedDeviceProperty(self.index, openvr.Prop_SerialNumber_String))
+
     def get_model(self):
         # mod_str = str(self.ovr.getStringTrackedDeviceProperty(self.index, openvr.Prop_ModelNumber_String))
-        serial_str = str(self.ovr.getStringTrackedDeviceProperty(self.index, openvr.Prop_SerialNumber_String))
+        serial_str = self.get_serial()
 
         replace_dict = {
             'LHR-8A2F6CBD': 'Left Controller',

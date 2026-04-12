@@ -154,6 +154,58 @@ class SettingsLayout(QVBoxLayout):
         self._fileselect_combo.addItems([f.split('.')[0] for f in os.listdir(settings_dir) if f.endswith('.json')])
         self._fileselect_combo.blockSignals(False)
 
+    def get_state_dict(self):
+        data = self.CC_grid_widget._table_model._data.copy()
+        for column in ['solo', 'send', 'invert']:
+            if column in data.columns:
+                data[column] = data[column].astype(bool)
+
+        return {
+            'dataframe': data.to_dict('records'),
+            'half_y_mode': self.checkbox_ymode.isChecked(),
+            'roll_x_factor': self.checkbox_roll_x_factor.isChecked(),
+            'roll_y_factor': self.checkbox_roll_y_factor.isChecked(),
+            'haptic': self.checkbox_enable_haptic.isChecked(),
+            'invert_toggle': self.checkbox_invert_toggle.isChecked(),
+            'mobile_box_mode': self.checkbox_mobile_box_mode.isChecked(),
+            'message_sleep_time': self.sleep_time_spinbox.value(),
+            'timeout_tolerance': self.tolerance_slider.value() / 100.0,
+            'timeout_time': self.timeout_spinbox.value(),
+        }
+
+    def apply_state_dict(self, settings):
+        if not settings:
+            return
+
+        dataframe = settings.get('dataframe')
+        if dataframe is not None:
+            self._data = pd.DataFrame(dataframe)
+            if not self._data.empty:
+                self.CC_grid_widget.set_data(self._data)
+
+        self.checkbox_ymode.setChecked(settings.get('half_y_mode', self.checkbox_ymode.isChecked()))
+        self.checkbox_roll_x_factor.setChecked(settings.get('roll_x_factor', self.checkbox_roll_x_factor.isChecked()))
+        self.checkbox_roll_y_factor.setChecked(settings.get('roll_y_factor', self.checkbox_roll_y_factor.isChecked()))
+        self.checkbox_enable_haptic.setChecked(settings.get('haptic', self.checkbox_enable_haptic.isChecked()))
+        self.checkbox_invert_toggle.setChecked(settings.get('invert_toggle', self.checkbox_invert_toggle.isChecked()))
+        self.checkbox_mobile_box_mode.setChecked(settings.get('mobile_box_mode', self.checkbox_mobile_box_mode.isChecked()))
+        self.sleep_time_spinbox.setValue(settings.get('message_sleep_time', self.sleep_time_spinbox.value()))
+        self.tolerance_slider.setValue(int(settings.get('timeout_tolerance', self.tolerance_slider.value() / 100.0) * 100))
+        self.timeout_spinbox.setValue(settings.get('timeout_time', self.timeout_spinbox.value()))
+
+    def set_selected_preset_name(self, preset_name):
+        if not preset_name:
+            return False
+
+        index = self._fileselect_combo.findText(preset_name)
+        if index < 0:
+            return False
+
+        self._fileselect_combo.blockSignals(True)
+        self._fileselect_combo.setCurrentIndex(index)
+        self._fileselect_combo.blockSignals(False)
+        return True
+
     def save_data(self):
 
         default_file_path = os.path.join(settings_dir, self._fileselect_combo.currentText() + ".json")
@@ -162,28 +214,7 @@ class SettingsLayout(QVBoxLayout):
 
 
         if file_path:
-            self._data = self.CC_grid_widget._table_model._data
-
-            # Make sure the solor and send data columns are bools
-            self._data['solo'] = self._data['solo'].astype(bool)
-            self._data['send'] = self._data['send'].astype(bool)
-
-            # Convert the DataFrame to a JSON string
-            df_dict = self._data.to_dict('records')
-
-            # Create a settings dictionary
-            settings = {
-                'dataframe': df_dict,
-                'half_y_mode': self.checkbox_ymode.isChecked(),
-                'roll_x_factor': self.checkbox_roll_x_factor.isChecked(),
-                'roll_y_factor': self.checkbox_roll_y_factor.isChecked(),
-                'haptic': self.checkbox_enable_haptic.isChecked(),
-                'invert_toggle': self.checkbox_invert_toggle.isChecked(),
-                'mobile_box_mode': self.checkbox_mobile_box_mode.isChecked(),
-                'message_sleep_time': self.sleep_time_spinbox.value(),
-                'timeout_tolerance': self.tolerance_slider.value() / 100.0,
-                'timeout_time': self.timeout_spinbox.value()
-            }
+            settings = self.get_state_dict()
 
             # Write the settings dictionary to the JSON file
             with open(file_path, 'w') as f:
@@ -191,7 +222,7 @@ class SettingsLayout(QVBoxLayout):
 
             # set the combo box to the new file name
             self.update_file_list()
-            self._fileselect_combo.setCurrentText(file_path.split('/')[-1].split('.')[0])
+            self._fileselect_combo.setCurrentText(os.path.splitext(os.path.basename(file_path))[0])
 
     def load_data(self):
         file_path = os.path.join(settings_dir, self._fileselect_combo.currentText() + ".json")  
@@ -200,23 +231,5 @@ class SettingsLayout(QVBoxLayout):
             # Read the settings dictionary from the JSON file
             with open(file_path, 'r') as f:
                 settings = json.load(f)
-
-            # Convert the DataFrame JSON string to a DataFrame
-            self._data = pd.DataFrame(settings['dataframe'])
-            # self._data = pd.read_json(settings['dataframe'], orient='split')
-
-            # Load the DataFrame into the grid widget
-            self.CC_grid_widget.set_data(self._data)
-
-            # # Load the other settings
-            self.checkbox_ymode.setChecked(settings['half_y_mode'])
-            self.checkbox_roll_x_factor.setChecked(settings['roll_x_factor'])
-            self.checkbox_roll_y_factor.setChecked(settings['roll_y_factor'])
-            self.checkbox_enable_haptic.setChecked(settings['haptic'])
-            self.checkbox_invert_toggle.setChecked(settings['invert_toggle'])
-            self.checkbox_mobile_box_mode.setChecked(settings['mobile_box_mode'])
-            # Load sleep/tolerance/timeout if present
-            self.sleep_time_spinbox.setValue(settings['message_sleep_time'])
-            self.tolerance_slider.setValue(int(settings['timeout_tolerance'] * 100))
-            self.timeout_spinbox.setValue(settings['timeout_time'])
+            self.apply_state_dict(settings)
 

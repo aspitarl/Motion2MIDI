@@ -8,6 +8,7 @@ from PyQt5.QtGui import QIcon
 
 from m2m.gui.layouts.distance_layout import DistanceLayout
 from m2m.core.osc_handler import OSCPresetLayout
+from m2m.core.snapshot_manager import SnapshotManager
 from m2m.gui.layouts.window_manager import WindowManagerLayout
 from m2m.gui.widgets.midi_listener import MidiListenerWindow
 from m2m.gui.widgets.debug_console import DebugConsoleWindow
@@ -63,6 +64,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Create menu bar
         self.create_menu_bar()
+        self.snapshot_manager = SnapshotManager(self)
         
         # Initialize utility windows
         self.midi_listener_window = MidiListenerWindow(parent=self)
@@ -96,6 +98,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def create_menu_bar(self):
         menubar = self.menuBar()
+        file_menu = menubar.addMenu('File')
+
+        save_program_state_action = QtWidgets.QAction('Save Program State', self)
+        save_program_state_action.triggered.connect(self.save_program_state)
+        save_program_state_action.setShortcut('Ctrl+Shift+S')
+        file_menu.addAction(save_program_state_action)
+
+        load_program_state_action = QtWidgets.QAction('Load Program State', self)
+        load_program_state_action.triggered.connect(self.load_program_state)
+        load_program_state_action.setShortcut('Ctrl+Shift+L')
+        file_menu.addAction(load_program_state_action)
+
         view_menu = menubar.addMenu('View')
 
         self.always_on_top_action = QtWidgets.QAction('Always on Top', self, checkable=True)
@@ -142,6 +156,50 @@ class MainWindow(QtWidgets.QMainWindow):
         about_action = QtWidgets.QAction('About', self)
         about_action.triggered.connect(self.show_about_dialog)
         help_menu.addAction(about_action)
+
+    def save_program_state(self):
+        default_path = os.path.join(script_path, '..', 'settings', 'program_state.snapshot.json')
+        file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+            self,
+            'Save Program State',
+            default_path,
+            'Motion2MIDI Snapshots (*.snapshot.json);;JSON Files (*.json)',
+        )
+        if not file_path:
+            return
+
+        self.snapshot_manager.save_to_file(file_path)
+        QtWidgets.QMessageBox.information(self, 'Program State Saved', f'Saved program state to:\n{file_path}')
+
+    def load_program_state(self):
+        default_path = os.path.join(script_path, '..', 'settings')
+        file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            'Load Program State',
+            default_path,
+            'Motion2MIDI Snapshots (*.snapshot.json);;JSON Files (*.json)',
+        )
+        if not file_path:
+            return
+
+        summary = self.snapshot_manager.load_from_file(file_path)
+        QtWidgets.QMessageBox.information(self, 'Program State Loaded', self._format_snapshot_summary(summary))
+
+    def _format_snapshot_summary(self, summary):
+        lines = [
+            f"Controller slots in snapshot: {summary['controller_slots']}",
+            f"Connected after restore: {summary['connected_slots']}",
+            f"Left disconnected: {summary['disconnected_slots']}",
+        ]
+
+        if summary['missing_devices']:
+            lines.append("Missing devices: " + ", ".join(summary['missing_devices']))
+        if summary['missing_midi_ports']:
+            lines.append("Missing MIDI ports: " + ", ".join(summary['missing_midi_ports']))
+        if summary['errors']:
+            lines.append("Errors: " + "; ".join(summary['errors']))
+
+        return "\n".join(lines)
 
     #TODO: this is not behaving as expected under multiple toggles
     def toggle_distance_layout(self, checked):

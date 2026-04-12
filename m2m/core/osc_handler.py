@@ -62,6 +62,46 @@ class OSCPresetLayout(QtWidgets.QVBoxLayout):
 
         self.osc_toggle_button.setChecked(True)
 
+    def get_state_dict(self):
+        return {
+            "osc_address": self.osc_address_edit.text(),
+            "osc_port": self.osc_port_edit.text(),
+            "listener_enabled": self.osc_toggle_button.isChecked(),
+            "preset_rows": self._get_table_rows(),
+        }
+
+    def apply_state_dict(self, state):
+        state = state or {}
+        listener_enabled = state.get("listener_enabled", self.osc_toggle_button.isChecked())
+
+        if self.osc_toggle_button.isChecked():
+            self.osc_toggle_button.setChecked(False)
+
+        self.osc_address_edit.setText(state.get("osc_address", self.osc_address_edit.text()))
+        self.osc_port_edit.setText(str(state.get("osc_port", self.osc_port_edit.text())))
+        self._set_table_rows(state.get("preset_rows", []))
+
+        if listener_enabled:
+            self.osc_toggle_button.setChecked(True)
+
+    def _get_table_rows(self):
+        rows = []
+        for row in range(self.osc_preset_table.rowCount()):
+            row_data = []
+            for column in range(self.osc_preset_table.columnCount()):
+                item = self.osc_preset_table.item(row, column)
+                row_data.append(item.text() if item else "")
+            rows.append(row_data)
+        return rows
+
+    def _set_table_rows(self, rows):
+        self.osc_preset_table.setRowCount(0)
+        for row in rows:
+            row_position = self.osc_preset_table.rowCount()
+            self.osc_preset_table.insertRow(row_position)
+            for column, data in enumerate(row[:self.osc_preset_table.columnCount()]):
+                self.osc_preset_table.setItem(row_position, column, QtWidgets.QTableWidgetItem(str(data)))
+
 
     def load_csv_dialog(self):
         options = QtWidgets.QFileDialog.Options()
@@ -88,11 +128,7 @@ class OSCPresetLayout(QtWidgets.QVBoxLayout):
         if file_name:
             with open(file_name, 'w', newline='') as csvfile:
                 writer = csv.writer(csvfile)
-                for row in range(self.osc_preset_table.rowCount()):
-                    row_data = []
-                    for column in range(self.osc_preset_table.columnCount()):
-                        item = self.osc_preset_table.item(row, column)
-                        row_data.append(item.text() if item else '')
+                for row_data in self._get_table_rows():
                     writer.writerow(row_data)
 
     def toggle_osc_listener(self, enabled):

@@ -140,6 +140,80 @@ class ControllerWidget(QtWidgets.QWidget):
         if self.datathread.midiout:
             self.datathread.midiout.close()
 
+    def get_state_dict(self, slot=None):
+        calibration = {}
+        if not isinstance(self.datathread.contr, NoDevice):
+            calibration = {
+                'device_model': self.datathread.contr.get_model(),
+                'device_serial': self.datathread.contr.get_serial(),
+                'range_dict': self.datathread.contr.range_dict,
+                'angle_offsets': self.datathread.contr.angle_offsets,
+            }
+
+        return {
+            'slot': slot,
+            'name': self.name,
+            'connected': self.is_connected(),
+            'preset_name': self.settings_layout._fileselect_combo.currentText(),
+            'connection': self.connection_layout.get_state_dict(),
+            'settings_data': self.settings_layout.get_state_dict(),
+            'calibration': calibration,
+        }
+
+    def apply_state_dict(self, state):
+        result = {
+            'connected': False,
+            'device_matched': True,
+            'midi_port_matched': True,
+            'requested_device': None,
+            'requested_midi_port': None,
+            'errors': [],
+        }
+
+        if self.is_connected():
+            self.disconnect_objects()
+
+        preset_name = state.get('preset_name')
+        if preset_name:
+            self.settings_layout.set_selected_preset_name(preset_name)
+
+        self.settings_layout.apply_state_dict(state.get('settings_data', {}))
+        self.datathread.update_dicts()
+
+        connection_state = dict(state.get('connection', {}))
+        if not connection_state.get('openvr_device'):
+            calibration = state.get('calibration', {})
+            connection_state['openvr_device'] = calibration.get('device_model')
+
+        connection_result = self.connection_layout.apply_state_dict(connection_state)
+        result.update(connection_result)
+
+        should_connect = state.get('connected', connection_state.get('connected', False))
+        if should_connect and result['device_matched'] and result['midi_port_matched']:
+            try:
+                self.connect_object()
+                self._apply_calibration_state(state.get('calibration', {}))
+                result['connected'] = True
+            except Exception as exc:
+                result['errors'].append(f"{self.name}: {exc}")
+                self.disconnect_objects()
+
+        self.update_device_settings()
+        return result
+
+    def _apply_calibration_state(self, calibration_state):
+        if not calibration_state or isinstance(self.datathread.contr, NoDevice):
+            return
+
+        angle_offsets = calibration_state.get('angle_offsets')
+        if angle_offsets:
+            self.datathread.contr.angle_offsets = angle_offsets
+
+        range_dict = calibration_state.get('range_dict')
+        if range_dict:
+            self.datathread.contr.range_dict = range_dict
+            self.datathread.update_table_model_range_dict()
+
     def update_sleep_time(self, value):
         self.datathread.sleep_time = value / 1000.0  # Convert ms to seconds
 

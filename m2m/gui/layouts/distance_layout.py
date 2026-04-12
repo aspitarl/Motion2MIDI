@@ -235,6 +235,61 @@ class DistanceLayout(QtWidgets.QVBoxLayout):
         self.polling_thread = PollingThread(parent=self)
         self.midi_port_combobox.currentTextChanged.connect(self.polling_thread.connect_midi_port)
 
+    def get_state_dict(self):
+        return {
+            'window_a': self.window1_combobox.currentText(),
+            'window_b': self.window2_combobox.currentText(),
+            'require_window_a_toggle': self.require_device1_checkbox.isChecked(),
+            'require_window_b_toggle': self.require_device2_checkbox.isChecked(),
+            'midi_port': self.midi_port_combobox.currentText(),
+            'cc_number': self.cc_number.value(),
+            'delay_ms': self.delay_spin_box.value(),
+            'range': self.range_spin_box.value(),
+            'invert': self.invert_checkbox.isChecked(),
+            'invert_toggles': self.invert_toggles_checkbox.isChecked(),
+            'polling_enabled': self.toggle_button.isChecked(),
+        }
+
+    def apply_state_dict(self, state):
+        state = state or {}
+        self.update_window_comboboxes()
+
+        result = {
+            'midi_port_matched': True,
+            'requested_midi_port': state.get('midi_port'),
+        }
+
+        self._set_combobox_text(self.window1_combobox, state.get('window_a'))
+        self._set_combobox_text(self.window2_combobox, state.get('window_b'))
+        self.require_device1_checkbox.setChecked(state.get('require_window_a_toggle', self.require_device1_checkbox.isChecked()))
+        self.require_device2_checkbox.setChecked(state.get('require_window_b_toggle', self.require_device2_checkbox.isChecked()))
+
+        midi_port = state.get('midi_port')
+        if midi_port:
+            result['midi_port_matched'] = self._set_combobox_text(self.midi_port_combobox, midi_port)
+
+        self.cc_number.setValue(state.get('cc_number', self.cc_number.value()))
+        self.delay_spin_box.setValue(state.get('delay_ms', self.delay_spin_box.value()))
+        self.range_spin_box.setValue(state.get('range', self.range_spin_box.value()))
+        self.invert_checkbox.setChecked(state.get('invert', self.invert_checkbox.isChecked()))
+        self.invert_toggles_checkbox.setChecked(state.get('invert_toggles', self.invert_toggles_checkbox.isChecked()))
+        self.change_windows()
+
+        polling_enabled = state.get('polling_enabled', self.toggle_button.isChecked())
+        if self.toggle_button.isChecked() != polling_enabled:
+            self.toggle_button.setChecked(polling_enabled)
+
+        return result
+
+    def _set_combobox_text(self, combobox, text):
+        if not text:
+            return False
+        index = combobox.findText(text)
+        if index < 0:
+            return False
+        combobox.setCurrentIndex(index)
+        return True
+
     def toggle_thread(self, checked):
         if checked:
             self.toggle_button.setText("Stop Polling")

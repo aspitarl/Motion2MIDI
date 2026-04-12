@@ -89,6 +89,49 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
         self.combobox_midi_ports.clear()
         self.combobox_midi_ports.addItems(available_ports)
 
+    def get_state_dict(self):
+        return {
+            'openvr_device': self.combobox_ovr_objects.currentText(),
+            'midi_port': self.combobox_midi_ports.currentText(),
+            'midi_channel': self.combobox_midi_channels.currentText(),
+            'midi_channel_index': self.combobox_midi_channels.currentIndex(),
+            'connected': self.checkbox_isconnected.isChecked(),
+        }
+
+    def apply_state_dict(self, state):
+        state = state or {}
+        self.discover_openvr_objects()
+        self.refresh_midi_ports()
+
+        requested_device = state.get('openvr_device')
+        requested_midi_port = state.get('midi_port')
+
+        result = {
+            'device_matched': self._set_combobox_text(self.combobox_ovr_objects, requested_device) if requested_device else True,
+            'midi_port_matched': self._set_combobox_text(self.combobox_midi_ports, requested_midi_port) if requested_midi_port else True,
+            'channel_matched': True,
+            'requested_device': requested_device,
+            'requested_midi_port': requested_midi_port,
+        }
+
+        channel_index = state.get('midi_channel_index')
+        channel_text = state.get('midi_channel')
+        if channel_index is not None and 0 <= channel_index < self.combobox_midi_channels.count():
+            self.combobox_midi_channels.setCurrentIndex(channel_index)
+        elif channel_text:
+            result['channel_matched'] = self._set_combobox_text(self.combobox_midi_channels, channel_text)
+
+        return result
+
+    def _set_combobox_text(self, combobox, text):
+        if not text:
+            return False
+        index = combobox.findText(text)
+        if index < 0:
+            return False
+        combobox.setCurrentIndex(index)
+        return True
+
     def discover_openvr_objects(self):
 
         self.dc.refresh_present_devices()
