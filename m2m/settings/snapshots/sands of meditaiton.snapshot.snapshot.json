@@ -4,14 +4,16 @@
         {
             "slot": 1,
             "name": "Controller 1",
-            "connected": false,
-            "preset_name": "controller_default",
+            "connected": true,
+            "preset_name": "cycle",
             "connection": {
-                "openvr_device": "",
-                "midi_port": "Left Controller 3",
+                "openvr_device": "Left Vive (Dev. 1): ",
+                "openvr_device_model": "Left Vive",
+                "openvr_device_serial": "LHR-1AB39A86",
+                "midi_port": "Left Vive 7",
                 "midi_channel": "1",
                 "midi_channel_index": 0,
-                "connected": false
+                "connected": true
             },
             "settings_data": {
                 "dataframe": [
@@ -20,8 +22,8 @@
                         "CC": 22,
                         "send": true,
                         "solo": false,
-                        "min_range": 0.6516948938369751,
-                        "max_range": 1.1346240043640137,
+                        "min_range": 1.1745561361312866,
+                        "max_range": 1.383440613746643,
                         "invert": false
                     },
                     {
@@ -29,57 +31,48 @@
                         "CC": 23,
                         "send": true,
                         "solo": false,
-                        "min_range": 0.9764372110366821,
-                        "max_range": 1.4235966205596924,
-                        "invert": false
-                    },
-                    {
-                        "dim": "z",
-                        "CC": 24,
-                        "send": true,
-                        "solo": false,
-                        "min_range": -0.4934180974960327,
-                        "max_range": -0.29236578941345215,
-                        "invert": false
-                    },
-                    {
-                        "dim": "roll",
-                        "CC": 25,
-                        "send": true,
-                        "solo": false,
-                        "min_range": 169.21746946751318,
-                        "max_range": 197.7900429563913,
-                        "invert": false
-                    },
-                    {
-                        "dim": "trigger",
-                        "CC": 28,
-                        "send": true,
-                        "solo": false,
-                        "min_range": 0.0,
-                        "max_range": 1.0,
+                        "min_range": 0.8892840147018433,
+                        "max_range": 1.040764570236206,
                         "invert": false
                     }
                 ],
-                "half_y_mode": true,
+                "half_y_mode": false,
                 "roll_x_factor": false,
                 "roll_y_factor": false,
-                "haptic": true,
-                "invert_toggle": false,
+                "haptic": false,
+                "invert_toggle": true,
                 "mobile_box_mode": false,
                 "message_sleep_time": 20,
-                "timeout_tolerance": 0.02,
+                "timeout_tolerance": 0.0,
                 "timeout_time": 10
             },
-            "calibration": {}
+            "calibration": {
+                "device_model": "Left Vive",
+                "device_serial": "LHR-1AB39A86",
+                "range_dict": {
+                    "x": {
+                        "min": 1.1745561361312866,
+                        "max": 1.383440613746643
+                    },
+                    "y": {
+                        "min": 0.8892840147018433,
+                        "max": 1.040764570236206
+                    }
+                },
+                "angle_offsets": {
+                    "yaw": 236.0255947236335,
+                    "pitch": 269.19583756829064,
+                    "roll": -170.05829700477716
+                }
+            }
         }
     ],
     "app_state": {
         "geometry": {
-            "x": 693,
-            "y": 54,
+            "x": 319,
+            "y": 98,
             "width": 459,
-            "height": 654
+            "height": 588
         },
         "show_distance_layout": false,
         "show_osc_layout": false,

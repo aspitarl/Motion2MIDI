@@ -5,7 +5,7 @@
             "slot": 1,
             "name": "Controller 1",
             "connected": true,
-            "preset_name": "controller_default",
+            "preset_name": "1_default_full",
             "connection": {
                 "openvr_device": "Left Controller (Dev. 2): ",
                 "openvr_device_model": "Left Controller",
@@ -18,30 +18,12 @@
             "settings_data": {
                 "dataframe": [
                     {
-                        "dim": "x",
-                        "CC": 22,
-                        "send": true,
-                        "solo": false,
-                        "min_range": 1.2918529510498047,
-                        "max_range": 1.4024771451950073,
-                        "invert": false
-                    },
-                    {
-                        "dim": "y",
-                        "CC": 23,
-                        "send": true,
-                        "solo": false,
-                        "min_range": 0.8619391918182373,
-                        "max_range": 0.9394024610519409,
-                        "invert": false
-                    },
-                    {
                         "dim": "z",
                         "CC": 24,
                         "send": true,
                         "solo": false,
-                        "min_range": -0.41304266452789307,
-                        "max_range": -0.2582663297653198,
+                        "min_range": -0.5595183372497559,
+                        "max_range": -0.3954540491104126,
                         "invert": false
                     },
                     {
@@ -49,24 +31,24 @@
                         "CC": 25,
                         "send": true,
                         "solo": false,
-                        "min_range": 89.04407396452797,
-                        "max_range": 235.7966500728154,
+                        "min_range": 141.28084951057085,
+                        "max_range": 221.61887446300324,
                         "invert": false
                     },
                     {
-                        "dim": "trigger",
-                        "CC": 28,
+                        "dim": "vy_magnitude",
+                        "CC": 29,
                         "send": true,
                         "solo": false,
-                        "min_range": 0.0,
-                        "max_range": 1.0,
+                        "min_range": 0.0011617717100307345,
+                        "max_range": 1.4250742197036743,
                         "invert": false
                     }
                 ],
                 "half_y_mode": false,
                 "roll_x_factor": false,
                 "roll_y_factor": false,
-                "haptic": true,
+                "haptic": false,
                 "invert_toggle": false,
                 "mobile_box_mode": false,
                 "message_sleep_time": 20,
@@ -78,60 +60,60 @@
                 "device_serial": "LHR-8A2F6CBD",
                 "range_dict": {
                     "x": {
-                        "min": 1.2918529510498047,
-                        "max": 1.4024771451950073
+                        "min": 1.2436575889587402,
+                        "max": 1.3592554330825806
                     },
                     "y": {
-                        "min": 0.8619391918182373,
-                        "max": 0.9394024610519409
+                        "min": 0.8722997903823853,
+                        "max": 1.0505046844482422
                     },
                     "z": {
-                        "min": -0.41304266452789307,
-                        "max": -0.2582663297653198
+                        "min": -0.5595183372497559,
+                        "max": -0.3954540491104126
                     },
                     "yaw": {
-                        "min": 47.667573179120495,
-                        "max": 71.25287084253955
+                        "min": 54.79819502637241,
+                        "max": 108.07049344770553
                     },
                     "pitch": {
-                        "min": 145.44866509017018,
-                        "max": 241.95977420824593
+                        "min": 127.38572431089375,
+                        "max": 233.29733271599196
                     },
                     "roll": {
-                        "min": 89.04407396452797,
-                        "max": 235.7966500728154
+                        "min": 141.28084951057085,
+                        "max": 221.61887446300324
                     },
                     "vx": {
-                        "min": -0.7541320323944092,
-                        "max": 0.5907235741615295
+                        "min": -0.8140667080879211,
+                        "max": 0.6359293460845947
                     },
                     "vy": {
-                        "min": -0.32940271496772766,
-                        "max": 0.5316911339759827
+                        "min": -1.241220474243164,
+                        "max": 1.4250742197036743
                     },
                     "vz": {
-                        "min": -0.7889535427093506,
-                        "max": 0.8301284909248352
+                        "min": -1.1913373470306396,
+                        "max": 0.7736774682998657
                     },
                     "velocity": {
-                        "min": 0.10193276839098467,
-                        "max": 1.119783437068354
+                        "min": 0.3416372521295118,
+                        "max": 1.7259152155867847
                     },
                     "xy_speed": {
-                        "min": 0.012928280752728318,
-                        "max": 0.8389522633394908
+                        "min": 0.26654497644547986,
+                        "max": 1.5876618519437689
                     },
                     "vx_magnitude": {
-                        "min": 0.0001647913159104064,
-                        "max": 0.7541320323944092
+                        "min": 0.004410568159073591,
+                        "max": 0.8140667080879211
                     },
                     "vy_magnitude": {
-                        "min": 0.001153219840489328,
-                        "max": 0.5316911339759827
+                        "min": 0.0011617717100307345,
+                        "max": 1.4250742197036743
                     },
                     "vz_magnitude": {
-                        "min": 0.009107711724936962,
-                        "max": 0.8301284909248352
+                        "min": 0.0017781583592295647,
+                        "max": 1.1913373470306396
                     },
                     "trigger": {
                         "min": 0,
@@ -139,19 +121,19 @@
                     }
                 },
                 "angle_offsets": {
-                    "yaw": 304.2216273407204,
-                    "pitch": -21.73327071485619,
-                    "roll": -11.339533803645509
+                    "yaw": 314.2450302772215,
+                    "pitch": -34.5948728667276,
+                    "roll": -20.138669992090257
                 }
             }
         }
     ],
     "app_state": {
         "geometry": {
-            "x": 396,
-            "y": 40,
+            "x": 693,
+            "y": 54,
             "width": 459,
-            "height": 654
+            "height": 610
         },
         "show_distance_layout": false,
         "show_osc_layout": false,
@@ -165,8 +147,8 @@
         "require_window_b_toggle": true,
         "midi_port": "Contr Distance 4",
         "cc_number": 30,
-        "delay_ms": 20,
-        "range": 1.0,
+        "delay_ms": 5,
+        "range": 1.5,
         "invert": true,
         "invert_toggles": false,
         "polling_enabled": false

@@ -5,8 +5,8 @@
             "CC": 22,
             "send": true,
             "solo": false,
-            "min_range": -0.7239749431610107,
-            "max_range": -0.42606329917907715,
+            "min_range": 0.6516948938369751,
+            "max_range": 1.1346240043640137,
             "invert": false
         },
         {
@@ -14,8 +14,8 @@
             "CC": 23,
             "send": true,
             "solo": false,
-            "min_range": 1.2700724601745605,
-            "max_range": 1.4586067199707031,
+            "min_range": 0.9764372110366821,
+            "max_range": 1.4235966205596924,
             "invert": false
         },
         {
@@ -23,8 +23,8 @@
             "CC": 24,
             "send": true,
             "solo": false,
-            "min_range": 1.781957983970642,
-            "max_range": 1.8560360670089722,
+            "min_range": -0.4934180974960327,
+            "max_range": -0.29236578941345215,
             "invert": false
         },
         {
@@ -32,41 +32,14 @@
             "CC": 25,
             "send": true,
             "solo": false,
-            "min_range": 110.91684601592965,
-            "max_range": 222.72834482527202,
-            "invert": false
-        },
-        {
-            "dim": "pitch",
-            "CC": 26,
-            "send": false,
-            "solo": false,
-            "min_range": 210.13590723213426,
-            "max_range": 234.16991306827504,
-            "invert": false
-        },
-        {
-            "dim": "yaw",
-            "CC": 27,
-            "send": false,
-            "solo": false,
-            "min_range": 159.3122090797545,
-            "max_range": 255.02333960467408,
+            "min_range": 169.21746946751318,
+            "max_range": 197.7900429563913,
             "invert": false
         },
         {
             "dim": "trigger",
             "CC": 28,
             "send": true,
-            "solo": false,
-            "min_range": 0.0035217258222209596,
-            "max_range": 0.5478542730937707,
-            "invert": false
-        },
-        {
-            "dim": "velocity",
-            "CC": 29,
-            "send": false,
             "solo": false,
             "min_range": 0.0,
             "max_range": 1.0,

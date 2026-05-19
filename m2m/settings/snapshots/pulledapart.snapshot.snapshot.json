@@ -7,7 +7,9 @@
             "connected": true,
             "preset_name": "1_default_full",
             "connection": {
-                "openvr_device": "Left Vive (Dev. 6): ",
+                "openvr_device": "Left Vive (Dev. 1): ",
+                "openvr_device_model": "Left Vive",
+                "openvr_device_serial": "LHR-1AB39A86",
                 "midi_port": "Left Vive 7",
                 "midi_channel": "1",
                 "midi_channel_index": 0,
@@ -16,69 +18,6 @@
             "settings_data": {
                 "dataframe": [
                     {
-                        "dim": "x",
-                        "CC": 22,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 0.605867862701416,
-                        "max_range": 0.7440929412841797,
-                        "invert": false
-                    },
-                    {
-                        "dim": "y",
-                        "CC": 23,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 1.0435556173324585,
-                        "max_range": 1.2489912509918213,
-                        "invert": false
-                    },
-                    {
-                        "dim": "z",
-                        "CC": 24,
-                        "send": false,
-                        "solo": false,
-                        "min_range": -0.4785580635070801,
-                        "max_range": -0.13672363758087158,
-                        "invert": false
-                    },
-                    {
-                        "dim": "roll",
-                        "CC": 25,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 164.71401516138366,
-                        "max_range": 231.8781257799121,
-                        "invert": false
-                    },
-                    {
-                        "dim": "pitch",
-                        "CC": 26,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 0.0022225967770737043,
-                        "max_range": 359.98971810306887,
-                        "invert": false
-                    },
-                    {
-                        "dim": "yaw",
-                        "CC": 27,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 166.7742501404955,
-                        "max_range": 277.9326951288659,
-                        "invert": false
-                    },
-                    {
-                        "dim": "trigger",
-                        "CC": 28,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 0.0,
-                        "max_range": 1.0,
-                        "invert": false
-                    },
-                    {
                         "dim": "velocity",
                         "CC": 29,
                         "send": true,
@@ -86,12 +25,39 @@
                         "min_range": 0.013934961028638738,
                         "max_range": 1.3350788410420515,
                         "invert": false
+                    },
+                    {
+                        "dim": "x",
+                        "CC": 22,
+                        "send": false,
+                        "solo": false,
+                        "min_range": 0.0,
+                        "max_range": 1.0,
+                        "invert": false
+                    },
+                    {
+                        "dim": "y",
+                        "CC": 23,
+                        "send": false,
+                        "solo": false,
+                        "min_range": 0.0,
+                        "max_range": 1.0,
+                        "invert": false
+                    },
+                    {
+                        "dim": "z",
+                        "CC": 24,
+                        "send": false,
+                        "solo": false,
+                        "min_range": 0.0,
+                        "max_range": 1.0,
+                        "invert": false
                     }
                 ],
-                "half_y_mode": true,
+                "half_y_mode": false,
                 "roll_x_factor": false,
                 "roll_y_factor": false,
-                "haptic": true,
+                "haptic": false,
                 "invert_toggle": true,
                 "mobile_box_mode": false,
                 "message_sleep_time": 20,
@@ -102,37 +68,21 @@
                 "device_model": "Left Vive",
                 "device_serial": "LHR-1AB39A86",
                 "range_dict": {
-                    "x": {
-                        "min": 0.605867862701416,
-                        "max": 0.7440929412841797
-                    },
-                    "y": {
-                        "min": 1.0435556173324585,
-                        "max": 1.2489912509918213
-                    },
-                    "z": {
-                        "min": -0.4785580635070801,
-                        "max": -0.13672363758087158
-                    },
-                    "roll": {
-                        "min": 164.71401516138366,
-                        "max": 231.8781257799121
-                    },
-                    "pitch": {
-                        "min": 0.0022225967770737043,
-                        "max": 359.98971810306887
-                    },
-                    "yaw": {
-                        "min": 166.7742501404955,
-                        "max": 277.9326951288659
-                    },
-                    "trigger": {
-                        "min": 0.0,
-                        "max": 1.0
-                    },
                     "velocity": {
                         "min": 0.013934961028638738,
                         "max": 1.3350788410420515
+                    },
+                    "x": {
+                        "min": 0.0,
+                        "max": 1.0
+                    },
+                    "y": {
+                        "min": 0.0,
+                        "max": 1.0
+                    },
+                    "z": {
+                        "min": 0.0,
+                        "max": 1.0
                     }
                 },
                 "angle_offsets": {
@@ -149,6 +99,8 @@
             "preset_name": "1_default_full",
             "connection": {
                 "openvr_device": "Right Vive (Dev. 5): ",
+                "openvr_device_model": "Right Vive",
+                "openvr_device_serial": "LHR-4A9CEADD",
                 "midi_port": "Right Vive 8",
                 "midi_channel": "1",
                 "midi_channel_index": 0,
@@ -157,69 +109,6 @@
             "settings_data": {
                 "dataframe": [
                     {
-                        "dim": "x",
-                        "CC": 22,
-                        "send": false,
-                        "solo": false,
-                        "min_range": -0.3954477310180664,
-                        "max_range": -0.2083430290222168,
-                        "invert": false
-                    },
-                    {
-                        "dim": "y",
-                        "CC": 23,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 1.0032411813735962,
-                        "max_range": 1.2616124153137207,
-                        "invert": false
-                    },
-                    {
-                        "dim": "z",
-                        "CC": 24,
-                        "send": false,
-                        "solo": false,
-                        "min_range": -2.9420201778411865,
-                        "max_range": -2.602947235107422,
-                        "invert": false
-                    },
-                    {
-                        "dim": "roll",
-                        "CC": 25,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 173.44879249462326,
-                        "max_range": 310.9242427034839,
-                        "invert": false
-                    },
-                    {
-                        "dim": "pitch",
-                        "CC": 26,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 16.775956888892495,
-                        "max_range": 169.3425661424176,
-                        "invert": false
-                    },
-                    {
-                        "dim": "yaw",
-                        "CC": 27,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 0.0015603086118289866,
-                        "max_range": 359.9958402609474,
-                        "invert": false
-                    },
-                    {
-                        "dim": "trigger",
-                        "CC": 28,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 0.0,
-                        "max_range": 1.0,
-                        "invert": false
-                    },
-                    {
                         "dim": "velocity",
                         "CC": 29,
                         "send": true,
@@ -227,12 +116,39 @@
                         "min_range": 0.010374267676122635,
                         "max_range": 1.3030777944897685,
                         "invert": false
+                    },
+                    {
+                        "dim": "x",
+                        "CC": 22,
+                        "send": false,
+                        "solo": false,
+                        "min_range": 0.0,
+                        "max_range": 1.0,
+                        "invert": false
+                    },
+                    {
+                        "dim": "x",
+                        "CC": 23,
+                        "send": false,
+                        "solo": false,
+                        "min_range": 0.0,
+                        "max_range": 1.0,
+                        "invert": false
+                    },
+                    {
+                        "dim": "x",
+                        "CC": 24,
+                        "send": false,
+                        "solo": false,
+                        "min_range": 0.0,
+                        "max_range": 1.0,
+                        "invert": false
                     }
                 ],
-                "half_y_mode": true,
+                "half_y_mode": false,
                 "roll_x_factor": false,
                 "roll_y_factor": false,
-                "haptic": true,
+                "haptic": false,
                 "invert_toggle": true,
                 "mobile_box_mode": false,
                 "message_sleep_time": 20,
@@ -243,43 +159,19 @@
                 "device_model": "Right Vive",
                 "device_serial": "LHR-4A9CEADD",
                 "range_dict": {
-                    "x": {
-                        "min": -0.3954477310180664,
-                        "max": -0.2083430290222168
-                    },
-                    "y": {
-                        "min": 1.0032411813735962,
-                        "max": 1.2616124153137207
-                    },
-                    "z": {
-                        "min": -2.9420201778411865,
-                        "max": -2.602947235107422
-                    },
-                    "roll": {
-                        "min": 173.44879249462326,
-                        "max": 310.9242427034839
-                    },
-                    "pitch": {
-                        "min": 16.775956888892495,
-                        "max": 169.3425661424176
-                    },
-                    "yaw": {
-                        "min": 0.0015603086118289866,
-                        "max": 359.9958402609474
-                    },
-                    "trigger": {
-                        "min": 0.0,
-                        "max": 1.0
-                    },
                     "velocity": {
                         "min": 0.010374267676122635,
                         "max": 1.3030777944897685
+                    },
+                    "x": {
+                        "min": 0.0,
+                        "max": 1.0
                     }
                 },
                 "angle_offsets": {
-                    "yaw": 274.92021537499,
-                    "pitch": 348.9391061487372,
-                    "roll": -48.32483784753583
+                    "yaw": 0,
+                    "pitch": 0,
+                    "roll": 0
                 }
             }
         }
@@ -288,8 +180,8 @@
         "geometry": {
             "x": 396,
             "y": 40,
-            "width": 940,
-            "height": 1061
+            "width": 902,
+            "height": 838
         },
         "show_distance_layout": true,
         "show_osc_layout": false,
@@ -307,7 +199,7 @@
         "range": 1.0,
         "invert": true,
         "invert_toggles": false,
-        "polling_enabled": false
+        "polling_enabled": true
     },
     "osc_state": {
         "osc_address": "/song",
