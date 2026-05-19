@@ -65,6 +65,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Create menu bar
         self.create_menu_bar()
         self.snapshot_manager = SnapshotManager(self)
+        self.last_snapshot_path = self._get_default_snapshot_path()
         
         # Initialize utility windows
         self.midi_listener_window = MidiListenerWindow(parent=self)
@@ -78,6 +79,19 @@ class MainWindow(QtWidgets.QMainWindow):
         # Set up the error logger
         self.error_logger = ErrorLogger(always_on_top=self.always_on_top_action.isChecked())
         sys.excepthook = self.error_logger.handle_exception
+
+    def _get_snapshots_dir(self):
+        snapshots_dir = os.path.join(script_path, '..', 'settings', 'snapshots')
+        os.makedirs(snapshots_dir, exist_ok=True)
+        return snapshots_dir
+
+    def _get_default_snapshot_path(self):
+        return os.path.join(self._get_snapshots_dir(), 'program_state.snapshot.json')
+
+    def _get_snapshot_dialog_default(self):
+        if self.last_snapshot_path and os.path.isdir(os.path.dirname(self.last_snapshot_path)):
+            return self.last_snapshot_path
+        return self._get_default_snapshot_path()
 
     def update_subwindow_settings(self):
         selected_rows = self.osc_preset_layout.osc_preset_table.selectionModel().selectedRows()
@@ -153,9 +167,7 @@ class MainWindow(QtWidgets.QMainWindow):
         help_menu.addAction(about_action)
 
     def save_program_state(self):
-        snapshots_dir = os.path.join(script_path, '..', 'settings', 'snapshots')
-        os.makedirs(snapshots_dir, exist_ok=True)
-        default_path = os.path.join(snapshots_dir, 'program_state.snapshot.json')
+        default_path = self._get_snapshot_dialog_default()
         file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
             self,
             'Save Program State',
@@ -166,10 +178,11 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.snapshot_manager.save_to_file(file_path)
+        self.last_snapshot_path = file_path
         QtWidgets.QMessageBox.information(self, 'Program State Saved', f'Saved program state to:\n{file_path}')
 
     def load_program_state(self):
-        default_path = os.path.join(script_path, '..', 'settings', 'snapshots')
+        default_path = self._get_snapshot_dialog_default()
         file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             self,
             'Load Program State',
@@ -180,6 +193,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         summary = self.snapshot_manager.load_from_file(file_path)
+        self.last_snapshot_path = file_path
         QtWidgets.QMessageBox.information(self, 'Program State Loaded', self._format_snapshot_summary(summary))
 
     def _format_snapshot_summary(self, summary):
