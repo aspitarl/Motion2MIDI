@@ -34,6 +34,8 @@ class SettingsLayout(QVBoxLayout):
         self.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
 
         self.parent = parent
+        self._tracking_suspended = False
+        self._loaded_preset_signature = None
 
         self.fileio_layout = QHBoxLayout()
         self.fileio_layout.setSpacing(3)
@@ -45,6 +47,12 @@ class SettingsLayout(QVBoxLayout):
 
         self._fileselect_combo = QComboBox()
         self.fileio_layout.addWidget(self._fileselect_combo)
+
+        self._preset_dirty_label = QLabel('*')
+        self._preset_dirty_label.setToolTip('Current settings differ from the selected preset')
+        self._preset_dirty_label.setStyleSheet('QLabel { color: #ffb347; font-weight: bold; }')
+        self._preset_dirty_label.setVisible(False)
+        self.fileio_layout.addWidget(self._preset_dirty_label)
 
         self._load_button = QPushButton("Apply")
         self._load_button.clicked.connect(self.load_data)
@@ -74,6 +82,7 @@ class SettingsLayout(QVBoxLayout):
         # use first file in settings directory as default 
         available_options = STANDARD_DIMENSIONS + list(CUSTOM_EQUATIONS.keys())
         self.CC_grid_widget = PandasGridWidget(df_initial, available_options=available_options)
+        self.CC_grid_widget.state_changed.connect(self._on_settings_edited)
 
         self.addWidget(self.CC_grid_widget)
 
@@ -107,6 +116,13 @@ class SettingsLayout(QVBoxLayout):
 
         self.checkbox_mobile_box_mode = QCheckBox('Mobile Box Mode')
         self.checkbox_mobile_box_mode.setChecked(False)
+
+        self.checkbox_ymode.stateChanged.connect(self._on_settings_edited)
+        self.checkbox_roll_x_factor.stateChanged.connect(self._on_settings_edited)
+        self.checkbox_roll_y_factor.stateChanged.connect(self._on_settings_edited)
+        self.checkbox_enable_haptic.stateChanged.connect(self._on_settings_edited)
+        self.checkbox_invert_toggle.stateChanged.connect(self._on_settings_edited)
+        self.checkbox_mobile_box_mode.stateChanged.connect(self._on_settings_edited)
 
         # Extra settings
         # make a grid layout for all extra settings checkboxes and add it to the main layout
@@ -157,6 +173,12 @@ class SettingsLayout(QVBoxLayout):
         self.timeout_spinbox.setSuffix(" s")
         tolerance_layout.addWidget(self.timeout_spinbox)
         self.addLayout(tolerance_layout)
+
+        self.sleep_time_spinbox.valueChanged.connect(self._on_settings_edited)
+        self.tolerance_slider.valueChanged.connect(self._on_settings_edited)
+        self.timeout_spinbox.valueChanged.connect(self._on_settings_edited)
+
+        self._set_clean_from_current_state()
 
     def update_file_list(self):
         os.makedirs(preset_settings_dir, exist_ok=True)
@@ -211,6 +233,7 @@ class SettingsLayout(QVBoxLayout):
         self.sleep_time_spinbox.setValue(settings.get('message_sleep_time', self.sleep_time_spinbox.value()))
         self.tolerance_slider.setValue(int(settings.get('timeout_tolerance', self.tolerance_slider.value() / 100.0) * 100))
         self.timeout_spinbox.setValue(settings.get('timeout_time', self.timeout_spinbox.value()))
+        self._on_settings_edited()
 
     def apply_preset_name(self, preset_name):
         if not preset_name:
@@ -254,11 +277,16 @@ class SettingsLayout(QVBoxLayout):
 
             # set the combo box to the new file name
             self.update_file_list()
+            self._tracking_suspended = True
             self._fileselect_combo.setCurrentText(_preset_name_from_file(os.path.basename(file_path)))
+            self._tracking_suspended = False
+            self._set_clean_from_state_dict(settings)
 
     def load_data(self):
         selected_preset = self._fileselect_combo.currentText()
         if not selected_preset:
+            self._loaded_preset_signature = None
+            self._preset_dirty_label.setVisible(False)
             return
 
         file_path = os.path.join(preset_settings_dir, selected_preset + ".json")
@@ -267,5 +295,28 @@ class SettingsLayout(QVBoxLayout):
             # Read the settings dictionary from the JSON file
             with open(file_path, 'r') as f:
                 settings = json.load(f)
+            self._tracking_suspended = True
             self.apply_state_dict(settings)
+            self._tracking_suspended = False
+            self._set_clean_from_state_dict(settings)
+
+    def _settings_signature(self, settings):
+        return json.dumps(settings, sort_keys=True)
+
+    def _set_clean_from_state_dict(self, settings):
+        self._loaded_preset_signature = self._settings_signature(settings)
+        self._preset_dirty_label.setVisible(False)
+
+    def _set_clean_from_current_state(self):
+        self._loaded_preset_signature = self._settings_signature(self.get_state_dict())
+        self._preset_dirty_label.setVisible(False)
+
+    def _on_settings_edited(self, *_):
+        if self._tracking_suspended:
+            return
+        if self._loaded_preset_signature is None:
+            self._preset_dirty_label.setVisible(False)
+            return
+        is_dirty = self._settings_signature(self.get_state_dict()) != self._loaded_preset_signature
+        self._preset_dirty_label.setVisible(is_dirty)
 

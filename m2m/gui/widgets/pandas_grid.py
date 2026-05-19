@@ -66,6 +66,8 @@ class PandasTableModel(QAbstractTableModel):
 
 
 class PandasGridWidget(QWidget):
+    state_changed = pyqtSignal()
+
     def __init__(self, data, parent=None, available_options=None):
         super().__init__(parent)
         self.available_options = available_options
@@ -82,6 +84,7 @@ class PandasGridWidget(QWidget):
 
         self._table_model = PandasTableModel(data)
         self._table_model._new_data.connect(self._load_data)
+        self._table_model.dataChanged.connect(lambda *_: self.state_changed.emit())
         self._grid_layout = QGridLayout()
         self._grid_layout.setSpacing(2)
         self._grid_layout.setContentsMargins(0, 0, 0, 0)
@@ -245,6 +248,7 @@ class PandasGridWidget(QWidget):
 
 
         self._load_data()
+        self.state_changed.emit()
 
     def add_row(self):
         new_row = pd.DataFrame([{
@@ -258,6 +262,7 @@ class PandasGridWidget(QWidget):
         }])
         self._table_model._data = pd.concat([self._table_model._data, new_row], ignore_index=True)
         self._load_data()
+        self.state_changed.emit()
 
     def remove_row(self):
         if len(self._table_model._data) > 0:
@@ -271,6 +276,7 @@ class PandasGridWidget(QWidget):
         self._current_solo_checkbox = None
         self.presolo_send_states = [(i, True, True) for i in range(len(self._table_model._data))]
         self._load_data()
+        self.state_changed.emit()
               
 
 
