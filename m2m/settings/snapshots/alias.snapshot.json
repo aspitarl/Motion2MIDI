@@ -4,24 +4,42 @@
         {
             "slot": 1,
             "name": "Controller 1",
-            "connected": false,
-            "preset_name": "1_default",
+            "connected": true,
+            "preset_name": "controller_default",
             "connection": {
-                "openvr_device": "Right Vive (Dev. 5): ",
-                "midi_port": "Right Vive 8",
+                "openvr_device": "Left Vive (Dev. 6): ",
+                "midi_port": "Left Vive 7",
                 "midi_channel": "1",
                 "midi_channel_index": 0,
-                "connected": false
+                "connected": true
             },
             "settings_data": {
                 "dataframe": [
+                    {
+                        "dim": "x",
+                        "CC": 22,
+                        "send": true,
+                        "solo": false,
+                        "min_range": -0.7239749431610107,
+                        "max_range": -0.42606329917907715,
+                        "invert": false
+                    },
                     {
                         "dim": "y",
                         "CC": 23,
                         "send": true,
                         "solo": false,
-                        "min_range": 1.1022861003875732,
-                        "max_range": 1.7040997743606567,
+                        "min_range": 1.2700724601745605,
+                        "max_range": 1.4586067199707031,
+                        "invert": false
+                    },
+                    {
+                        "dim": "z",
+                        "CC": 24,
+                        "send": true,
+                        "solo": false,
+                        "min_range": 1.781957983970642,
+                        "max_range": 1.8560360670089722,
                         "invert": false
                     },
                     {
@@ -29,8 +47,35 @@
                         "CC": 25,
                         "send": true,
                         "solo": false,
-                        "min_range": 159.0848818619669,
-                        "max_range": 201.64098231581073,
+                        "min_range": 110.91684601592965,
+                        "max_range": 222.72834482527202,
+                        "invert": false
+                    },
+                    {
+                        "dim": "pitch",
+                        "CC": 26,
+                        "send": false,
+                        "solo": false,
+                        "min_range": 210.13590723213426,
+                        "max_range": 234.16991306827504,
+                        "invert": false
+                    },
+                    {
+                        "dim": "yaw",
+                        "CC": 27,
+                        "send": false,
+                        "solo": false,
+                        "min_range": 159.3122090797545,
+                        "max_range": 255.02333960467408,
+                        "invert": false
+                    },
+                    {
+                        "dim": "trigger",
+                        "CC": 28,
+                        "send": true,
+                        "solo": false,
+                        "min_range": 0.0035217258222209596,
+                        "max_range": 0.5478542730937707,
                         "invert": false
                     },
                     {
@@ -47,118 +92,61 @@
                 "roll_x_factor": false,
                 "roll_y_factor": false,
                 "haptic": true,
-                "invert_toggle": false,
+                "invert_toggle": true,
                 "mobile_box_mode": false,
                 "message_sleep_time": 20,
                 "timeout_tolerance": 0.02,
                 "timeout_time": 10
             },
-            "calibration": {}
-        },
-        {
-            "slot": 2,
-            "name": "Controller 2",
-            "connected": false,
-            "preset_name": "2_standard_CC",
-            "connection": {
-                "openvr_device": "Left Vive (Dev. 6): ",
-                "midi_port": "Left Vive 7",
-                "midi_channel": "1",
-                "midi_channel_index": 0,
-                "connected": false
-            },
-            "settings_data": {
-                "dataframe": [
-                    {
-                        "dim": "x",
-                        "CC": 2,
-                        "send": false,
-                        "solo": false,
-                        "min_range": -0.2958977222442627,
-                        "max_range": -0.09085726737976074,
-                        "invert": false
+            "calibration": {
+                "device_model": "Left Vive",
+                "device_serial": "LHR-1AB39A86",
+                "range_dict": {
+                    "x": {
+                        "min": -0.7239749431610107,
+                        "max": -0.42606329917907715
                     },
-                    {
-                        "dim": "y",
-                        "CC": 1,
-                        "send": true,
-                        "solo": false,
-                        "min_range": 1.2693101167678833,
-                        "max_range": 1.371934175491333,
-                        "invert": false
+                    "y": {
+                        "min": 1.2700724601745605,
+                        "max": 1.4586067199707031
                     },
-                    {
-                        "dim": "z",
-                        "CC": 4,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 1.1954325437545776,
-                        "max_range": 1.2632265090942383,
-                        "invert": false
+                    "z": {
+                        "min": 1.781957983970642,
+                        "max": 1.8560360670089722
                     },
-                    {
-                        "dim": "roll",
-                        "CC": 11,
-                        "send": true,
-                        "solo": false,
-                        "min_range": 179.9782841953418,
-                        "max_range": 217.37660087330724,
-                        "invert": false
+                    "roll": {
+                        "min": 110.91684601592965,
+                        "max": 222.72834482527202
                     },
-                    {
-                        "dim": "pitch",
-                        "CC": 91,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 283.8010259437932,
-                        "max_range": 302.02032702578697,
-                        "invert": false
+                    "pitch": {
+                        "min": 210.13590723213426,
+                        "max": 234.16991306827504
                     },
-                    {
-                        "dim": "yaw",
-                        "CC": 92,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 187.51708519899555,
-                        "max_range": 220.52194292228697,
-                        "invert": false
+                    "yaw": {
+                        "min": 159.3122090797545,
+                        "max": 255.02333960467408
                     },
-                    {
-                        "dim": "trigger",
-                        "CC": 64,
-                        "send": true,
-                        "solo": false,
-                        "min_range": 0.0,
-                        "max_range": 1.0,
-                        "invert": false
+                    "trigger": {
+                        "min": 0.0035217258222209596,
+                        "max": 0.5478542730937707
                     },
-                    {
-                        "dim": "velocity",
-                        "CC": 7,
-                        "send": false,
-                        "solo": false,
-                        "min_range": 0.3088780246234096,
-                        "max_range": 1.6614769953928392,
-                        "invert": false
+                    "velocity": {
+                        "min": 0.0,
+                        "max": 1.0
                     }
-                ],
-                "half_y_mode": true,
-                "roll_x_factor": false,
-                "roll_y_factor": false,
-                "haptic": true,
-                "invert_toggle": false,
-                "mobile_box_mode": false,
-                "message_sleep_time": 20,
-                "timeout_tolerance": 0.02,
-                "timeout_time": 10
-            },
-            "calibration": {}
+                },
+                "angle_offsets": {
+                    "yaw": 0,
+                    "pitch": 0,
+                    "roll": 0
+                }
+            }
         }
     ],
     "app_state": {
         "geometry": {
-            "x": 494,
-            "y": 193,
+            "x": 693,
+            "y": 54,
             "width": 940,
             "height": 718
         },
@@ -169,7 +157,7 @@
     },
     "distance_state": {
         "window_a": "Controller 1",
-        "window_b": "Controller 2",
+        "window_b": "Controller 1",
         "require_window_a_toggle": true,
         "require_window_b_toggle": true,
         "midi_port": "Contr Distance 4",

@@ -153,7 +153,9 @@ class MainWindow(QtWidgets.QMainWindow):
         help_menu.addAction(about_action)
 
     def save_program_state(self):
-        default_path = os.path.join(script_path, '..', 'settings', 'program_state.snapshot.json')
+        snapshots_dir = os.path.join(script_path, '..', 'settings', 'snapshots')
+        os.makedirs(snapshots_dir, exist_ok=True)
+        default_path = os.path.join(snapshots_dir, 'program_state.snapshot.json')
         file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
             self,
             'Save Program State',
@@ -167,7 +169,7 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information(self, 'Program State Saved', f'Saved program state to:\n{file_path}')
 
     def load_program_state(self):
-        default_path = os.path.join(script_path, '..', 'settings')
+        default_path = os.path.join(script_path, '..', 'settings', 'snapshots')
         file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             self,
             'Load Program State',

@@ -6,6 +6,17 @@ from pythonosc import dispatcher, osc_server
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
+
+def _resolve_default_osc_csv_path():
+    candidate_paths = [
+        os.path.join(script_path, '..', 'settings', 'tracker_presets', 'multi_contr_presets.csv'),
+        os.path.join(script_path, '..', 'settings', 'multi_contr_presets.csv'),
+    ]
+    for candidate in candidate_paths:
+        if os.path.exists(candidate):
+            return candidate
+    return None
+
 class OSCPresetLayout(QtWidgets.QVBoxLayout):
     def __init__(self, parent):
         super(OSCPresetLayout, self).__init__(parent)
@@ -57,8 +68,9 @@ class OSCPresetLayout(QtWidgets.QVBoxLayout):
         self.load_button.clicked.connect(self.load_csv_dialog)
         self.save_button.clicked.connect(self.save_csv_dialog)
 
-        default_preset_file = os.path.join(script_path, '..', 'settings', "multi_contr_presets.csv")
-        self.load_csv(default_preset_file)
+        default_preset_file = _resolve_default_osc_csv_path()
+        if default_preset_file:
+            self.load_csv(default_preset_file)
 
         self.osc_toggle_button.setChecked(True)
 

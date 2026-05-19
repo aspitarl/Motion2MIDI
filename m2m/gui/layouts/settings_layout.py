@@ -11,7 +11,8 @@ import pandas as pd
 import os
 
 script_dir = os.path.dirname(__file__)
-settings_dir = os.path.join(script_dir, '..', '..', 'settings')
+settings_root_dir = os.path.join(script_dir, '..', '..', 'settings')
+preset_settings_dir = os.path.join(settings_root_dir, 'tracker_presets')
 SNAPSHOT_FILE_SUFFIX = '.snapshot.json'
 
 
@@ -59,14 +60,16 @@ class SettingsLayout(QVBoxLayout):
 
         self.addLayout(self.fileio_layout)
 
-        file_path = os.path.join(settings_dir, self._fileselect_combo.currentText() + ".json")
-        # Read the settings dictionary from the JSON file
-        with open(file_path, 'r') as f:
-            settings = json.load(f)
-
-        # Convert the DataFrame JSON string to a DataFrame
-        # df_initial = pd.read_json(settings['dataframe'], orient='split')
-        df_initial = pd.DataFrame(settings['dataframe'])
+        file_path = os.path.join(preset_settings_dir, self._fileselect_combo.currentText() + ".json")
+        if os.path.exists(file_path):
+            # Read the settings dictionary from the JSON file
+            with open(file_path, 'r') as f:
+                settings = json.load(f)
+            # Convert the DataFrame JSON string to a DataFrame
+            # df_initial = pd.read_json(settings['dataframe'], orient='split')
+            df_initial = pd.DataFrame(settings['dataframe'])
+        else:
+            df_initial = pd.DataFrame([])
         # use first file in settings directory as default 
         available_options = STANDARD_DIMENSIONS + list(CUSTOM_EQUATIONS.keys())
         self.CC_grid_widget = PandasGridWidget(df_initial, available_options=available_options)
@@ -158,11 +161,12 @@ class SettingsLayout(QVBoxLayout):
         self.addLayout(tolerance_layout)
 
     def update_file_list(self):
+        os.makedirs(preset_settings_dir, exist_ok=True)
         self._fileselect_combo.blockSignals(True)
         selected_text = self._fileselect_combo.currentText()
         self._fileselect_combo.clear()
         preset_names = sorted(
-            [_preset_name_from_file(f) for f in os.listdir(settings_dir) if _is_preset_json_file(f)]
+            [_preset_name_from_file(f) for f in os.listdir(preset_settings_dir) if _is_preset_json_file(f)]
         )
         self._fileselect_combo.addItems(preset_names)
         if selected_text:
@@ -237,7 +241,8 @@ class SettingsLayout(QVBoxLayout):
 
     def save_data(self):
 
-        default_file_path = os.path.join(settings_dir, self._fileselect_combo.currentText() + ".json")
+        os.makedirs(preset_settings_dir, exist_ok=True)
+        default_file_path = os.path.join(preset_settings_dir, self._fileselect_combo.currentText() + ".json")
         # open a file dialog with this as the default file name
         file_path, _ = QFileDialog.getSaveFileName(self.parent, 'Save Settings', default_file_path, 'JSON Files (*.json)')
 
@@ -258,7 +263,7 @@ class SettingsLayout(QVBoxLayout):
         if not selected_preset:
             return
 
-        file_path = os.path.join(settings_dir, selected_preset + ".json")
+        file_path = os.path.join(preset_settings_dir, selected_preset + ".json")
         if os.path.exists(file_path):
 
             # Read the settings dictionary from the JSON file
