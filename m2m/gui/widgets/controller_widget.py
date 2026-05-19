@@ -34,6 +34,10 @@ class ControllerWidget(QtWidgets.QWidget):
         name_label = QLabel(f"<b>{self.name}</b>")
         name_label.setAlignment(QtCore.Qt.AlignCenter)
         name_label.setStyleSheet("QLabel { background-color: #2a82da; color: white; padding: 2px; margin-bottom: 2px; }")
+        # Keep the title bar at text-height so it never expands with parent layout changes.
+        name_label.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        text_height = name_label.fontMetrics().height()
+        name_label.setFixedHeight(text_height + 8)
         layout.addWidget(name_label)
 
         # Connection layout with border
