@@ -74,6 +74,8 @@ class PandasGridWidget(QWidget):
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         
         self._current_solo_checkbox = None
+        self._send_checkboxes = {}
+        self._solo_checkboxes = {}
 
         #initialize to all true for case that solo is selected in preset
         self.presolo_send_states = [(i, True, True) for i in range(len(data))]
@@ -98,6 +100,8 @@ class PandasGridWidget(QWidget):
 
     def _load_data(self):
         self._widgets = []
+        self._send_checkboxes = {}
+        self._solo_checkboxes = {}
 
         # Reset the layout
         if self.layout() is not None:
@@ -154,23 +158,40 @@ class PandasGridWidget(QWidget):
                 if col == 'solo':
                     widget.stateChanged.connect(lambda state, row=j: self._disable_send_checkboxes(state, row))
 
+                if col == 'send' and isinstance(widget, QCheckBox):
+                    self._send_checkboxes[j] = widget
+                elif col == 'solo' and isinstance(widget, QCheckBox):
+                    self._solo_checkboxes[j] = widget
+
                 self._grid_layout.addWidget(widget, j+1, i)
                 self._widgets.append(widget)
 
-    def _disable_send_checkboxes(self, state, row):
-        send_checkbox_column = 2
-        send_column_offset = send_checkbox_column*len(self._table_model._data)
+        action_col = len(data.columns)
+        action_label = QLabel('Action')
+        action_label.setSizePolicy(action_label.sizePolicy().horizontalPolicy(), QSizePolicy.Fixed)
+        action_label.setMaximumHeight(20)
+        self._grid_layout.addWidget(action_label, 0, action_col)
 
-        solo_checkbox_column = 3
-        solo_column_offset = solo_checkbox_column*len(self._table_model._data)
+        for row in range(len(data)):
+            remove_button = QPushButton('X')
+            remove_button.setToolTip('Remove this row')
+            remove_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+            remove_button.setFixedSize(24, 20)
+            remove_button.clicked.connect(lambda _, row=row: self.remove_row_at(row))
+            self._grid_layout.addWidget(remove_button, row + 1, action_col)
+
+    def _disable_send_checkboxes(self, state, row):
         if state == Qt.Checked:
-            if self._current_solo_checkbox is not None:
+            current_row_solo = self._solo_checkboxes.get(row)
+            if self._current_solo_checkbox is not None and self._current_solo_checkbox is not current_row_solo:
+                self._current_solo_checkbox.blockSignals(True)
                 self._current_solo_checkbox.setChecked(False)
-            self._current_solo_checkbox = self._widgets[row+solo_column_offset]
+                self._current_solo_checkbox.blockSignals(False)
+            self._current_solo_checkbox = current_row_solo
 
             self.presolo_send_states = []
-            for i in range(len(self._table_model._data)):
-                send_widget = self._widgets[i+send_column_offset]
+            for i in sorted(self._send_checkboxes):
+                send_widget = self._send_checkboxes[i]
                 self.presolo_send_states.append((i, send_widget.isChecked(), send_widget.isEnabled()))
                 if i != row:
                     send_widget.setChecked(False)
@@ -183,7 +204,9 @@ class PandasGridWidget(QWidget):
         else:
             self._current_solo_checkbox = None
             for i, checked, enabled in self.presolo_send_states:
-                send_widget = self._widgets[i+send_column_offset]
+                if i not in self._send_checkboxes:
+                    continue
+                send_widget = self._send_checkboxes[i]
                 send_widget.setEnabled(enabled)
                 send_widget.setChecked(checked)
 
@@ -221,8 +244,16 @@ class PandasGridWidget(QWidget):
 
     def remove_row(self):
         if len(self._table_model._data) > 0:
-            self._table_model._data = self._table_model._data.iloc[:-1]
-            self._load_data()
+            self.remove_row_at(len(self._table_model._data) - 1)
+
+    def remove_row_at(self, row):
+        if row < 0 or row >= len(self._table_model._data):
+            return
+
+        self._table_model._data = self._table_model._data.drop(self._table_model._data.index[row]).reset_index(drop=True)
+        self._current_solo_checkbox = None
+        self.presolo_send_states = [(i, True, True) for i in range(len(self._table_model._data))]
+        self._load_data()
               
 
 

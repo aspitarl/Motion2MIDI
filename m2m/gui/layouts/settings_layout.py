@@ -76,14 +76,11 @@ class SettingsLayout(QVBoxLayout):
 
         self.addWidget(self.CC_grid_widget)
 
-        # Add Row / Remove Row buttons
+        # Add Row button (rows can be removed inline via X buttons in the grid)
         row_buttons_layout = QHBoxLayout()
         self.add_row_button = QPushButton("Add Row")
         self.add_row_button.clicked.connect(self.CC_grid_widget.add_row)
-        self.remove_row_button = QPushButton("Remove Row")
-        self.remove_row_button.clicked.connect(self.CC_grid_widget.remove_row)
         row_buttons_layout.addWidget(self.add_row_button)
-        row_buttons_layout.addWidget(self.remove_row_button)
         self.addLayout(row_buttons_layout)
 
 
