@@ -174,10 +174,15 @@ class ControllerWidget(QtWidgets.QWidget):
             self.disconnect_objects()
 
         preset_name = state.get('preset_name')
-        if preset_name:
-            self.settings_layout.set_selected_preset_name(preset_name)
+        settings_data = state.get('settings_data', {})
 
-        self.settings_layout.apply_state_dict(state.get('settings_data', {}))
+        if settings_data:
+            self.settings_layout.apply_state_dict(settings_data)
+            if preset_name:
+                self.settings_layout.set_selected_preset_name(preset_name)
+        elif preset_name:
+            self.settings_layout.apply_preset_name(preset_name)
+
         self.datathread.update_dicts()
 
         connection_state = dict(state.get('connection', {}))

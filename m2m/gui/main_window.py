@@ -86,14 +86,9 @@ class MainWindow(QtWidgets.QMainWindow):
             selected_preset = self.osc_preset_layout.osc_preset_table.item(selected_row, 0).text()
             logging.debug(f"Selected preset: {selected_preset}")
             for widget_num, widget in enumerate(self.window_manager_layout.controller_widgets.values()):
-                fileselect_combobox = widget.settings_layout._fileselect_combo
                 table_preset_name_for_widget = self.osc_preset_layout.osc_preset_table.item(selected_row, widget_num + 1).text()
                 table_preset_name_for_widget = table_preset_name_for_widget.strip()
-                # check if the preset name is in the fileselect_combobox
-                if table_preset_name_for_widget in [fileselect_combobox.itemText(i) for i in range(fileselect_combobox.count())]:
-                    fileselect_combobox.setCurrentText(table_preset_name_for_widget)
-                    fileselect_combobox.currentIndexChanged.emit(fileselect_combobox.currentIndex())
-                else:
+                if not widget.settings_layout.apply_preset_name(table_preset_name_for_widget):
                     logging.warning(f"Preset {table_preset_name_for_widget} not found in fileselect_combobox for controller widget {widget_num + 1}")
 
     def create_menu_bar(self):

@@ -12,6 +12,15 @@ import os
 
 script_dir = os.path.dirname(__file__)
 settings_dir = os.path.join(script_dir, '..', '..', 'settings')
+SNAPSHOT_FILE_SUFFIX = '.snapshot.json'
+
+
+def _is_preset_json_file(file_name):
+    return file_name.endswith('.json') and not file_name.endswith(SNAPSHOT_FILE_SUFFIX)
+
+
+def _preset_name_from_file(file_name):
+    return os.path.splitext(file_name)[0]
 
 class SettingsLayout(QVBoxLayout):
 
@@ -35,7 +44,7 @@ class SettingsLayout(QVBoxLayout):
         self._fileselect_combo = QComboBox()
         self.fileio_layout.addWidget(self._fileselect_combo)
 
-        self._load_button = QPushButton("Load")
+        self._load_button = QPushButton("Apply")
         self._load_button.clicked.connect(self.load_data)
         self.fileio_layout.addWidget(self._load_button)
 
@@ -150,8 +159,16 @@ class SettingsLayout(QVBoxLayout):
 
     def update_file_list(self):
         self._fileselect_combo.blockSignals(True)
+        selected_text = self._fileselect_combo.currentText()
         self._fileselect_combo.clear()
-        self._fileselect_combo.addItems([f.split('.')[0] for f in os.listdir(settings_dir) if f.endswith('.json')])
+        preset_names = sorted(
+            [_preset_name_from_file(f) for f in os.listdir(settings_dir) if _is_preset_json_file(f)]
+        )
+        self._fileselect_combo.addItems(preset_names)
+        if selected_text:
+            index = self._fileselect_combo.findText(selected_text)
+            if index >= 0:
+                self._fileselect_combo.setCurrentIndex(index)
         self._fileselect_combo.blockSignals(False)
 
     def get_state_dict(self):
@@ -193,6 +210,18 @@ class SettingsLayout(QVBoxLayout):
         self.tolerance_slider.setValue(int(settings.get('timeout_tolerance', self.tolerance_slider.value() / 100.0) * 100))
         self.timeout_spinbox.setValue(settings.get('timeout_time', self.timeout_spinbox.value()))
 
+    def apply_preset_name(self, preset_name):
+        if not preset_name:
+            return False
+
+        index = self._fileselect_combo.findText(preset_name)
+        if index < 0:
+            return False
+
+        self._fileselect_combo.setCurrentIndex(index)
+        self.load_data()
+        return True
+
     def set_selected_preset_name(self, preset_name):
         if not preset_name:
             return False
@@ -222,10 +251,14 @@ class SettingsLayout(QVBoxLayout):
 
             # set the combo box to the new file name
             self.update_file_list()
-            self._fileselect_combo.setCurrentText(os.path.splitext(os.path.basename(file_path))[0])
+            self._fileselect_combo.setCurrentText(_preset_name_from_file(os.path.basename(file_path)))
 
     def load_data(self):
-        file_path = os.path.join(settings_dir, self._fileselect_combo.currentText() + ".json")  
+        selected_preset = self._fileselect_combo.currentText()
+        if not selected_preset:
+            return
+
+        file_path = os.path.join(settings_dir, selected_preset + ".json")
         if os.path.exists(file_path):
 
             # Read the settings dictionary from the JSON file
