@@ -28,7 +28,7 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         self.controller_table_widget = QtWidgets.QTableWidget(0, 5)
         self.controller_table_widget.setHorizontalHeaderLabels(["Range Set", "Name", "Setting", "Controller", "MIDI Port"])
         self.controller_table_widget.setColumnWidth(0, 80)
-        self.controller_table_widget.setColumnWidth(0, 100)
+        self.controller_table_widget.setColumnWidth(1, 100)
         # Configure table to resize to content
         self.controller_table_widget.verticalHeader().setVisible(False)
         self.controller_table_widget.horizontalHeader().setFixedHeight(header_height)
@@ -55,6 +55,8 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         widget_name = f"Controller {len(self.controller_widgets) + 1}"
         controller_widget = self.parent.add_controller_widget(widget_name)
         controller_widget.range_set_selected = True
+        controller_widget.connection_layout.combobox_selections_changed.connect(self.update_controller_table)
+        controller_widget.settings_layout._fileselect_combo.currentIndexChanged.connect(self.update_controller_table)
         self.controller_widgets[widget_name] = controller_widget
         
         # Add remove button functionality - create a custom widget for each row
@@ -164,12 +166,9 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         return combobox_clone
 
     def connect_comboboxes(self, original_combobox, table_combobox):
-        #TODO: we are not connecting original_combobox. this will keep adding connections from the comboboxes in subwidgets to non-existent comboboxes in the table
-        # Need to figure out how to disconnect the previous connection
         def update_original_combobox(index):
-            original_combobox.blockSignals(True)
             original_combobox.setCurrentIndex(index)
-            original_combobox.blockSignals(False)
+
         table_combobox.currentIndexChanged.connect(update_original_combobox)
 
 
