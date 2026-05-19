@@ -88,9 +88,22 @@ class SnapshotManager:
 
         self.main_window.osc_preset_layout.apply_state_dict(snapshot.get("osc_state", {}))
         self._apply_app_state(snapshot.get("app_state", {}))
+        self._compact_loaded_layouts()
         self.main_window.update_title()
 
         return summary
+
+    def _compact_loaded_layouts(self):
+        for widget in self._get_controller_widgets():
+            widget.updateGeometry()
+            if widget.layout() is not None:
+                widget.layout().activate()
+
+        if self.main_window.centralWidget() is not None:
+            self.main_window.centralWidget().updateGeometry()
+
+        self.main_window.updateGeometry()
+        self.main_window.adjustSize()
 
     def _get_controller_widgets(self):
         controller_widgets = self.main_window.window_manager_layout.controller_widgets

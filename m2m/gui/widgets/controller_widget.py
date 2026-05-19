@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (
-    QVBoxLayout, QHBoxLayout, QTextEdit, QLabel, 
-    QWidget, QFrame
+    QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,
+    QWidget, QFrame, QLayout
 )
 from PyQt5 import QtCore, QtWidgets
 import mido
@@ -24,11 +24,12 @@ class ControllerWidget(QtWidgets.QWidget):
         layout = QVBoxLayout()
         layout.setSpacing(3)  # Add spacing between sections
         layout.setContentsMargins(5, 5, 5, 5)  # Add margins around the widget
+        layout.setSizeConstraint(QLayout.SetMinimumSize)
         
         # Set minimum and maximum width for better horizontal layout
         self.setMinimumWidth(450)  # Increased from 300
         self.setMaximumWidth(600)  # Increased from 400
-        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
 
         # Add name label at the top
         name_label = QLabel(f"<b>{self.name}</b>")
@@ -91,6 +92,7 @@ class ControllerWidget(QtWidgets.QWidget):
         self.datathread.exception_signal.connect(self.handle_datathread_exception)
 
         self.setLayout(layout)
+        self.updateGeometry()
     
     def update_device_settings(self):
         if self.datathread.contr:

@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QHeaderView, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QFileDialog, QGridLayout, QLabel, QSpinBox, QLineEdit, QComboBox, QCheckBox, QDateEdit, QDateTimeEdit, QTimeEdit, QDoubleSpinBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QHeaderView, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QFileDialog, QGridLayout, QLabel, QSpinBox, QLineEdit, QComboBox, QCheckBox, QDateEdit, QDateTimeEdit, QTimeEdit, QDoubleSpinBox, QLayout
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QSizePolicy
@@ -85,6 +85,7 @@ class PandasGridWidget(QWidget):
         self._grid_layout = QGridLayout()
         self._grid_layout.setSpacing(2)
         self._grid_layout.setContentsMargins(0, 0, 0, 0)
+        self._grid_layout.setSizeConstraint(QLayout.SetMinimumSize)
         self._widgets = []
         self._widget_types = {
             'int64': QSpinBox,
@@ -109,6 +110,7 @@ class PandasGridWidget(QWidget):
         self._grid_layout = QGridLayout()
         self._grid_layout.setSpacing(2)
         self._grid_layout.setContentsMargins(0, 0, 0, 0)
+        self._grid_layout.setSizeConstraint(QLayout.SetMinimumSize)
         self.setLayout(self._grid_layout)
 
         data = self._table_model._data
@@ -179,6 +181,21 @@ class PandasGridWidget(QWidget):
             remove_button.setFixedSize(24, 20)
             remove_button.clicked.connect(lambda _, row=row: self.remove_row_at(row))
             self._grid_layout.addWidget(remove_button, row + 1, action_col)
+
+        self._propagate_compact_resize()
+
+    def _propagate_compact_resize(self):
+        self.updateGeometry()
+        self.adjustSize()
+
+        parent = self.parentWidget()
+        while parent is not None:
+            parent.updateGeometry()
+            if parent.layout() is not None:
+                parent.layout().activate()
+            if parent.isWindow():
+                parent.adjustSize()
+            parent = parent.parentWidget()
 
     def _disable_send_checkboxes(self, state, row):
         if state == Qt.Checked:

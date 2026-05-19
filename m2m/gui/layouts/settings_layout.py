@@ -31,6 +31,7 @@ class SettingsLayout(QVBoxLayout):
         # Set compact spacing for this layout
         self.setSpacing(3)
         self.setContentsMargins(0, 0, 0, 0)
+        self.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
 
         self.parent = parent
 
