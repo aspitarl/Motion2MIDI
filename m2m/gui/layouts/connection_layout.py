@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
+import re
 
 import mido
 from PyQt5.QtCore import pyqtSignal
@@ -21,6 +22,7 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
         self.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
 
         self.dc = device_collection
+        self._openvr_device_metadata = []
 
         section_layout = QHBoxLayout()
         section_layout.setSpacing(3)
@@ -91,8 +93,18 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
         self.combobox_midi_ports.addItems(available_ports)
 
     def get_state_dict(self):
+        selected_index = self.combobox_ovr_objects.currentIndex()
+        selected_device_model = None
+        selected_device_serial = None
+        if 0 <= selected_index < len(self.dc.present_devices):
+            selected_device = self.dc.present_devices[selected_index]
+            selected_device_model = selected_device.get_model()
+            selected_device_serial = selected_device.get_serial()
+
         return {
             'openvr_device': self.combobox_ovr_objects.currentText(),
+            'openvr_device_model': selected_device_model,
+            'openvr_device_serial': selected_device_serial,
             'midi_port': self.combobox_midi_ports.currentText(),
             'midi_channel': self.combobox_midi_channels.currentText(),
             'midi_channel_index': self.combobox_midi_channels.currentIndex(),
@@ -105,13 +117,17 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
         self.refresh_midi_ports()
 
         requested_device = state.get('openvr_device')
+        requested_device_model = state.get('openvr_device_model')
+        requested_device_serial = state.get('openvr_device_serial')
         requested_midi_port = state.get('midi_port')
 
         result = {
-            'device_matched': self._set_combobox_text(self.combobox_ovr_objects, requested_device) if requested_device else True,
+            'device_matched': self._set_openvr_device(requested_device, requested_device_model, requested_device_serial),
             'midi_port_matched': self._set_combobox_text(self.combobox_midi_ports, requested_midi_port) if requested_midi_port else True,
             'channel_matched': True,
             'requested_device': requested_device,
+            'requested_device_model': requested_device_model,
+            'requested_device_serial': requested_device_serial,
             'requested_midi_port': requested_midi_port,
         }
 
@@ -133,12 +149,62 @@ class ConnectionLayout(QtWidgets.QVBoxLayout):
         combobox.setCurrentIndex(index)
         return True
 
+    def _normalize_device_text(self, text):
+        if not text:
+            return ''
+        normalized = str(text).strip().lower()
+        normalized = re.sub(r'\s+', ' ', normalized)
+        return normalized
+
+    def _set_openvr_device(self, requested_device, requested_model=None, requested_serial=None):
+        if self.combobox_ovr_objects.count() == 0:
+            return False
+
+        if requested_serial:
+            for index, metadata in enumerate(self._openvr_device_metadata):
+                if metadata.get('serial') == requested_serial:
+                    self.combobox_ovr_objects.setCurrentIndex(index)
+                    return True
+
+        if requested_device and self._set_combobox_text(self.combobox_ovr_objects, requested_device):
+            return True
+
+        normalized_requested = self._normalize_device_text(requested_device)
+        if normalized_requested:
+            for index, metadata in enumerate(self._openvr_device_metadata):
+                normalized_display = self._normalize_device_text(metadata.get('display'))
+                if normalized_requested in normalized_display or normalized_display in normalized_requested:
+                    self.combobox_ovr_objects.setCurrentIndex(index)
+                    return True
+
+        normalized_model = self._normalize_device_text(requested_model)
+        if normalized_model:
+            for index, metadata in enumerate(self._openvr_device_metadata):
+                normalized_display = self._normalize_device_text(metadata.get('display'))
+                normalized_device_model = self._normalize_device_text(metadata.get('model'))
+                if normalized_model in normalized_display or normalized_model == normalized_device_model:
+                    self.combobox_ovr_objects.setCurrentIndex(index)
+                    return True
+
+        return False
+
     def discover_openvr_objects(self):
 
         self.dc.refresh_present_devices()
 
         self.combobox_ovr_objects.clear()
-        display_text = [str(c) for c in self.dc.present_devices]
+        self._openvr_device_metadata = []
+        display_text = []
+        for device in self.dc.present_devices:
+            display = str(device)
+            display_text.append(display)
+            self._openvr_device_metadata.append(
+                {
+                    'display': display,
+                    'model': device.get_model(),
+                    'serial': device.get_serial(),
+                }
+            )
         self.combobox_ovr_objects.addItems(display_text)
 
     def select_midi_port_based_on_object(self):

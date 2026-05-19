@@ -192,9 +192,13 @@ class ControllerWidget(QtWidgets.QWidget):
         self.datathread.update_dicts()
 
         connection_state = dict(state.get('connection', {}))
+        calibration = state.get('calibration', {})
         if not connection_state.get('openvr_device'):
-            calibration = state.get('calibration', {})
             connection_state['openvr_device'] = calibration.get('device_model')
+        if not connection_state.get('openvr_device_model'):
+            connection_state['openvr_device_model'] = calibration.get('device_model')
+        if not connection_state.get('openvr_device_serial'):
+            connection_state['openvr_device_serial'] = calibration.get('device_serial')
 
         connection_result = self.connection_layout.apply_state_dict(connection_state)
         result.update(connection_result)
