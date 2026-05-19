@@ -141,8 +141,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Add Utility menu for controller-related features
         utility_menu = menubar.addMenu('Utility')
         
-        # Add 'Range Set Mode' action - affects all controllers
-        self.range_set_action = QtWidgets.QAction('Range Set Mode (All Controllers)', self, checkable=True)
+        # Add 'Range Set Mode' action for selected controllers
+        self.range_set_action = QtWidgets.QAction('Range Set Mode (Selected Controllers)', self, checkable=True)
         self.range_set_action.triggered.connect(self.toggle_range_set_mode)
         self.range_set_action.setShortcut('Ctrl+R')
         utility_menu.addAction(self.range_set_action)
@@ -248,8 +248,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.error_logger.always_on_top = checked
 
     def toggle_range_set_mode(self, checked):
-        """Toggle range set mode for all controller widgets"""
-        for widget in self.window_manager_layout.controller_widgets.values():
+        """Toggle range set mode for the selected controller widgets"""
+        for widget in self.window_manager_layout.get_targeted_controller_widgets():
             if checked:
                 widget.datathread.active_mode_manual_bypass = True
                 widget.datathread.manual_range_set = checked

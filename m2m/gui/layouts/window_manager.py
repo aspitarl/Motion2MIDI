@@ -25,8 +25,9 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
         self.scroll_area.setFixedHeight(100)  # Fixed height for scroll area
 
         # Create a table widget to display the spawned widgets and their settings
-        self.controller_table_widget = QtWidgets.QTableWidget(0, 4)
-        self.controller_table_widget.setHorizontalHeaderLabels(["Name", "Setting", "Controller", "MIDI Port"])
+        self.controller_table_widget = QtWidgets.QTableWidget(0, 5)
+        self.controller_table_widget.setHorizontalHeaderLabels(["Range Set", "Name", "Setting", "Controller", "MIDI Port"])
+        self.controller_table_widget.setColumnWidth(0, 80)
         self.controller_table_widget.setColumnWidth(0, 100)
         # Configure table to resize to content
         self.controller_table_widget.verticalHeader().setVisible(False)
@@ -53,6 +54,7 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
     def add_controller_widget(self):
         widget_name = f"Controller {len(self.controller_widgets) + 1}"
         controller_widget = self.parent.add_controller_widget(widget_name)
+        controller_widget.range_set_selected = True
         self.controller_widgets[widget_name] = controller_widget
         
         # Add remove button functionality - create a custom widget for each row
@@ -85,6 +87,8 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
             new_name = f"Controller {i}"
             widget = self.controller_widgets.pop(widget_name)
             widget.name = new_name
+            if not hasattr(widget, 'range_set_selected'):
+                widget.range_set_selected = True
             # Update the widget's internal name label
             name_label = widget.findChild(QtWidgets.QLabel)
             if name_label and hasattr(name_label, 'setText'):
@@ -95,6 +99,18 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
             row_position = self.controller_table_widget.rowCount()
             self.controller_table_widget.insertRow(row_position)
             self.controller_table_widget.setRowHeight(row_position, 30)  # Set compact row height
+
+            range_set_checkbox = QtWidgets.QCheckBox()
+            range_set_checkbox.setChecked(widget.range_set_selected)
+            range_set_checkbox.stateChanged.connect(
+                lambda state, controller_widget=widget: setattr(controller_widget, 'range_set_selected', bool(state))
+            )
+            range_set_widget = QtWidgets.QWidget()
+            range_set_layout = QtWidgets.QHBoxLayout(range_set_widget)
+            range_set_layout.setContentsMargins(0, 0, 0, 0)
+            range_set_layout.setAlignment(QtCore.Qt.AlignCenter)
+            range_set_layout.addWidget(range_set_checkbox)
+            self.controller_table_widget.setCellWidget(row_position, 0, range_set_widget)
             
             # Controller name (with remove button)
             name_widget = QtWidgets.QWidget()
@@ -110,16 +126,16 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
             name_layout.addWidget(remove_button)
             name_layout.addStretch()
             
-            self.controller_table_widget.setCellWidget(row_position, 0, name_widget)
+            self.controller_table_widget.setCellWidget(row_position, 1, name_widget)
             
             # Clone the comboboxes for the table
             controller_combobox = self.clone_combobox(widget.connection_layout.combobox_ovr_objects)
             midi_port_combobox = self.clone_combobox(widget.connection_layout.combobox_midi_ports)
             fileselect_combobox = self.clone_combobox(widget.settings_layout._fileselect_combo)
 
-            self.controller_table_widget.setCellWidget(row_position, 1, fileselect_combobox)
-            self.controller_table_widget.setCellWidget(row_position, 2, controller_combobox)
-            self.controller_table_widget.setCellWidget(row_position, 3, midi_port_combobox)
+            self.controller_table_widget.setCellWidget(row_position, 2, fileselect_combobox)
+            self.controller_table_widget.setCellWidget(row_position, 3, controller_combobox)
+            self.controller_table_widget.setCellWidget(row_position, 4, midi_port_combobox)
             
             self.connect_comboboxes(widget.settings_layout._fileselect_combo, fileselect_combobox)
             self.connect_comboboxes(widget.connection_layout.combobox_ovr_objects, controller_combobox)
@@ -131,6 +147,12 @@ class WindowManagerLayout(QtWidgets.QVBoxLayout):
 
         if hasattr(self.parent, 'distance_layout'):
             self.parent.distance_layout.update_window_comboboxes()
+
+    def get_targeted_controller_widgets(self):
+        return [
+            widget for widget in self.controller_widgets.values()
+            if getattr(widget, 'range_set_selected', True)
+        ]
         
 
     def clone_combobox(self, original_combobox):
